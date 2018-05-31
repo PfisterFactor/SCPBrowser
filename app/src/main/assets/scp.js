@@ -16,6 +16,8 @@ function onLoad() {
     handleCollapsibleBlocks();
 }
 
+// Fades in an element
+// Stolen off of stack overflow ¯\_(ツ)_/¯ (https://stackoverflow.com/a/6121270)
 function fadeIn(element) {
     var op = 0.1;  // initial opacity
     element.style.display = 'block';
@@ -29,11 +31,15 @@ function fadeIn(element) {
     }, 10);
 }
 
-// Fixes the collapsible blocks the SCP wiki uses
+// Implements the collapsible blocks the SCP wiki uses
 function handleCollapsibleBlocks() {
+    // Get all (soon-to-be) clickable block links
     var collapsible_block_links = document.getElementsByClassName("collapsible-block-link");
         for (var i = 0; i < collapsible_block_links.length; i++) {
             var element = collapsible_block_links[i];
+            // Add the click functionality
+            // Closes if open
+            // Opens if closes
             element.addEventListener("click", function() {
                 var collapsible_blocks = element.parentNode.parentNode.parentNode.children
                 var folded = collapsible_blocks[0];

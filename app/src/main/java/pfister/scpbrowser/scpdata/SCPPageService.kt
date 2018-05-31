@@ -6,7 +6,7 @@ import retrofit2.http.Path
 
 interface SCPPageService {
     companion object {
-        fun injectLocalResources(scppage:SCPPage): SCPPage {
+        fun injectLocalResources(scppage:SCPPage) {
             val STYLESHEET = """
             |<link href="scp-theme1.css" type="text/css" rel="stylesheet">
             |<link href="scp-theme2.css" type="text/css" rel="stylesheet">
@@ -17,15 +17,25 @@ interface SCPPageService {
                 |
             """.trimMargin()
             scppage.PageContent = STYLESHEET + JAVASCRIPT + "<body onload=\"onLoad()\">" + scppage.PageContent + "</body>"
-            return scppage
+        }
+        fun stripUnwantedElements(scppage: SCPPage) {
+            val unwantedRatingBox = "<div class=\"page-rate-widget-box\">"
+
+            val index = scppage.PageContent?.indexOf(unwantedRatingBox)
+            if (index == null || index == -1) return
+
+            val indexOfEndTag = scppage.PageContent?.indexOf("</div>",index)
+            if (indexOfEndTag == null || indexOfEndTag == -1) return
+
+            // 6 is the length of "</div>"
+            scppage.PageContent = scppage.PageContent?.removeRange(index, indexOfEndTag + 6)
         }
     }
 
     @GET("{scp}")
     fun getSCPPage(@Path("scp") scp:String) : Call<SCPPage>
 
-    @GET("http://www.scp-wiki.net/component:theme/code/1")
-    fun getSCPCSS(): Call<String>
+
 
 
 

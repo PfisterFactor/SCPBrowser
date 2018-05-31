@@ -72,10 +72,16 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         if (response == null || !response.isSuccessful) return null
         if (response.body() == null) return null
 
-        return SCPPageService.injectLocalResources(response.body()!!)
+        val page = response.body()!!
+
+        SCPPageService.stripUnwantedElements(page)
+        SCPPageService.injectLocalResources(page)
+        return page
+
     }
 
     // Displays the SCP page from the database if its available, otherwise downloads and displays it
+    // Todo: Implement database usage
     private fun displaySCPPage(scp: String): Boolean {
         if (SCPService() == null) return false
         doAsync{
