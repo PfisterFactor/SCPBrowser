@@ -16,6 +16,19 @@ function onLoad() {
     handleCollapsibleBlocks();
 }
 
+function fadeIn(element) {
+    var op = 0.1;  // initial opacity
+    element.style.display = 'block';
+    var timer = setInterval(function () {
+        if (op >= 1){
+            clearInterval(timer);
+        }
+        element.style.opacity = op;
+        element.style.filter = 'alpha(opacity=' + op * 100 + ")";
+        op += op * 0.1;
+    }, 10);
+}
+
 // Fixes the collapsible blocks the SCP wiki uses
 function handleCollapsibleBlocks() {
     var collapsible_block_links = document.getElementsByClassName("collapsible-block-link");
@@ -27,7 +40,9 @@ function handleCollapsibleBlocks() {
                 var unfolded = collapsible_blocks[1];
                 if (!isHidden(folded)) {
                     hide(folded);
+                    hide(unfolded.children[1]);
                     show(unfolded);
+                    fadeIn(unfolded.children[1]);
                 }
                 else {
                     hide(unfolded);
