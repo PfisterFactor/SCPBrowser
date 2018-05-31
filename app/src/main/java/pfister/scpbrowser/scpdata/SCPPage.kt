@@ -16,5 +16,7 @@ class SCPPage {
     // The full page content of the SCP
     var PageContent: String? = null
 
+//    var Tags: Array<String>? = null
+
 }
 

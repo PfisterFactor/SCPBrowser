@@ -59,8 +59,8 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun onURLClicked(request:WebResourceRequest):Boolean  {
-        val scpURL = request.url.pathSegments.last()
-        if (scpURL == viewmodel?.CurrentSCPPage) return false
+        val scpURL = request.url.path.drop(1)
+        if (scpURL == viewmodel?.CurrentSCPPage()) return false
 
         displaySCPPage(scpURL)
         return true
@@ -89,7 +89,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             if (page != null) {
                 uiThread {
                     scp_display.loadDataWithBaseURL("file:///android_asset/", page.PageContent!!, "text/html", "UTF-8",null)
-                    viewmodel?.CurrentSCPPage = scp
+                    viewmodel?.SCPPagesVisited?.push(scp)
                 }
             }
         }
@@ -98,15 +98,21 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onStart() {
         super.onStart()
-        displaySCPPage(viewmodel?.CurrentSCPPage.orEmpty())
+        displaySCPPage(viewmodel?.CurrentSCPPage().orEmpty())
     }
 
     // Called when back button on phone is pressed
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
+        when {
+            drawer_layout.isDrawerOpen(GravityCompat.START) -> drawer_layout.closeDrawer(GravityCompat.START)
+            scp_display.canGoBack() -> {
+                scp_display.goBack()
+                viewmodel?.SCPPagesVisited?.pop()
+            }
+            else -> {
+                viewmodel?.SCPPagesVisited?.clear()
+                super.onBackPressed()
+            }
         }
     }
 
@@ -120,17 +126,18 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
-        when (item.itemId) {
-            R.id.action_settings -> return true
-            else -> return super.onOptionsItemSelected(item)
+        return when (item.itemId) {
+            R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
         when (item.itemId) {
-            R.id.nav_camera -> {
-                // Handle the camera action
+            R.id.nav_scp_home -> {
+                // Navigates back to the SCP homepage
+                displaySCPPage("")
             }
             R.id.nav_gallery -> {
 
