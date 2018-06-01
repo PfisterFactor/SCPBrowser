@@ -13,6 +13,7 @@ interface SCPPageService {
             |
             """.trimMargin()
             val JAVASCRIPT = """
+                |<script type="text/javascript" src="jquery.js"></script>
                 |<script type="text/javascript" src="scp.js"></script>
                 |
             """.trimMargin()
