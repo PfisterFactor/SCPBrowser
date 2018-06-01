@@ -25,6 +25,7 @@ function handleCollapsibleBlocks() {
           }
 }
 // Uses the tippy tooltip library to put up tooltips for footnotes
+// Also removes WIKIDOT api calls on the footnoterefs
 function handleFootnotes() {
     var footnotes = $(".footnoteref a")
     for (var i = 0; i < footnotes.length; i++) {
@@ -32,12 +33,13 @@ function handleFootnotes() {
         // Get rid of the WIKIDOT api call to scroll to the footnote
         footnote.setAttribute("onclick","");
         var footnoteNumber = footnote.id.replace(/^footnoteref\-/, "");
-        // Gets the footnote at the bottom that corresponds to the footnote ref
-        var footnoteBottom = $("#footnote-" + footnoteNumber).get(0);
 
-        // Set the title attribute to the bottom footnotes html
-        // Tippy looks at the title attribute to decide what to display
-        footnote.setAttribute("title",footnoteBottom.innerHTML);
-        tippy(footnote);
+        // Assign a tooltip to every footnoteref corresponding to the footnote at the bottom
+        tippy(footnote, {
+            allowTitleHTML: true,
+            hideOnClick: false,
+            html: "#footnote-" + footnoteNumber,
+            interactive: true
+        });
     }
 }
