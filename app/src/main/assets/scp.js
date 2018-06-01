@@ -1,7 +1,35 @@
+
 // Called when page is loaded
 function onLoad() {
     handleCollapsibleBlocks();
     handleFootnotes();
+}
+
+Element.prototype.documentOffsetTop = function () {
+    return this.offsetTop + ( this.offsetParent ? this.offsetParent.documentOffsetTop() : 0 );
+};
+
+jQuery.fn.highlight = function (time) {
+    $(this).each(function () {
+        var el = $(this);
+        $("<div/>")
+        .width(el.outerWidth())
+        .height(el.outerHeight())
+        .css({
+            "position": "absolute",
+            "left": el.offset().left,
+            "top": el.offset().top,
+            "background-color": "#ffff99",
+            "opacity": ".7",
+            "z-index": "9999999"
+        }).appendTo('body').fadeOut(time).queue(function () { $(this).remove(); });
+    });
+}
+
+
+function scrollToMiddle(el) {
+	var top = el.documentOffsetTop() - ( window.innerHeight / 2 );
+  window.scrollTo(0, top);
 }
 
 // Implements the collapsible blocks the SCP wiki uses
@@ -24,22 +52,64 @@ function handleCollapsibleBlocks() {
               });
           }
 }
-// Uses the tippy tooltip library to put up tooltips for footnotes
-// Also removes WIKIDOT api calls on the footnoterefs
+
 function handleFootnotes() {
-    var footnotes = $(".footnoteref a")
+    // Uses the tippy tooltip library to put up tooltips for footnotes
+    // Also removes WIKIDOT api calls on the footnoterefs
+	function footnoterefs() {
+        var footnoterefs = $(".footnoteref a")
+        for (var i = 0; i < footnoterefs.length; i++) {
+            var footnoteref = footnoterefs[i];
+            // Get rid of the WIKIDOT api call to scroll to the footnote
+            footnoteref.setAttribute("onclick","");
+            var footnoteNumber = footnoteref.id.replace(/^footnoteref\-/, "");
+
+            // Assign a tooltip to every footnoteref corresponding to the footnote at the bottom
+            tippy(footnoteref, {
+                allowTitleHTML: true,
+                hideOnClick: false,
+                html: "#footnote-" + footnoteNumber,
+                interactive: true,
+            });
+    }
+    // Removes all tooltips on scroll
+    window.addEventListener('scroll', () => {
+      for (const popper of document.querySelectorAll('.tippy-popper')) {
+        const instance = popper._tippy
+
+        if (instance.state.visible) {
+          instance.popperInstance.disableEventListeners()
+          instance.hide()
+        }
+      }
+    })
+  }
+  // Implements scrolling up to the footnote when pressed
+  // Also does a neat highlight
+  // Also removes WIKIDOT api calls
+  function footnotes() {
+  	var footnotes = $(".footnote-footer a")
     for (var i = 0; i < footnotes.length; i++) {
         var footnote = footnotes[i];
-        // Get rid of the WIKIDOT api call to scroll to the footnote
+        // Remove WIKIDOT api call
         footnote.setAttribute("onclick","");
-        var footnoteNumber = footnote.id.replace(/^footnoteref\-/, "");
 
-        // Assign a tooltip to every footnoteref corresponding to the footnote at the bottom
-        tippy(footnote, {
-            allowTitleHTML: true,
-            hideOnClick: false,
-            html: "#footnote-" + footnoteNumber,
-            interactive: true
-        });
+      footnote.addEventListener("click", function() {
+      var footnoteNumber = $(this).get(0).parentElement.id.replace(/^footnote\-/, "");
+      	var footnoteref = $("#footnoteref-"+footnoteNumber);
+        var collapsible_block_to_unfold = footnoteref.closest("div.collapsible-block");
+        if (collapsible_block_to_unfold.length != 0) {
+        	var folded_block = collapsible_block_to_unfold.children(".collapsible-block-folded")
+        	var folded = folded_block.is(":visible");
+          if (folded)
+        		folded_block.children(".collapsible-block-link").get(0).click();
+        }
+        scrollToMiddle(footnoteref.get(0));
+        footnoteref.parent().parent().highlight(2000);
+      })
     }
+  }
+
+  footnoterefs();
+  footnotes();
 }
