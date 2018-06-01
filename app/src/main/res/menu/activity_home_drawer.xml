@@ -6,20 +6,24 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_scp_home"
-            android:icon="@drawable/ic_menu_camera"
+            android:icon="@drawable/ic_menu_manage"
             android:title="SCP Home" />
         <item
-            android:id="@+id/nav_gallery"
-            android:icon="@drawable/ic_menu_gallery"
-            android:title="Gallery" />
-        <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@drawable/ic_menu_slideshow"
-            android:title="Slideshow" />
-        <item
-            android:id="@+id/nav_manage"
+            android:id="@+id/nav_series_I"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Tools" />
+            android:title="Series I (001-999)" />
+        <item
+            android:id="@+id/nav_series_II"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Series II (1000-1999)" />
+        <item
+            android:id="@+id/nav_series_III"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Series III (2000-2999)" />
+        <item
+            android:id="@+id/nav_series_IV"
+            android:icon="@drawable/ic_menu_manage"
+            android:title="Series IV (3000-3999)" />
     </group>
 
     <item android:title="Communicate">
