@@ -43,6 +43,7 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
             if (page != null) {
                 uiThread {
                     this@SCPDisplay.loadDataWithBaseURL("file:///android_asset/", page.PageContent!!, "text/html", "UTF-8",null)
+
                     CurrentSCPPage = scp
                 }
             }

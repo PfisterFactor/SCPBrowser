@@ -13,15 +13,16 @@ jQuery.fn.highlight = function (time) {
     $(this).each(function () {
         var el = $(this);
         $("<div/>")
-        .width(el.outerWidth())
-        .height(el.outerHeight())
+        .width(50)
+        .height(50)
         .css({
             "position": "absolute",
-            "left": el.offset().left,
-            "top": el.offset().top,
-            "background-color": "#ffff99",
+            "left": el.offset().left - 21,
+            "top": el.offset().top - 20,
+            "background-color": "#ffb3b3",
             "opacity": ".7",
-            "z-index": "9999999"
+            "z-index": "9999999",
+           	"border-radius": "50%"
         }).appendTo('body').fadeOut(time).queue(function () { $(this).remove(); });
     });
 }
@@ -105,7 +106,7 @@ function handleFootnotes() {
         		folded_block.children(".collapsible-block-link").get(0).click();
         }
         scrollToMiddle(footnoteref.get(0));
-        footnoteref.parent().parent().highlight(2000);
+        footnoteref.parent().highlight(2000);
       })
     }
   }

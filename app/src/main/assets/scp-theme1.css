@@ -1,4 +1,5 @@
 body{
+    background-color: #fffafafa;
 	margin: 0px;
 	padding: 0px;
 }
@@ -94,7 +95,7 @@ a.newpage{
 	position: relative;
 }
 
-#page-content{
+#page-content {
 
 }
 
