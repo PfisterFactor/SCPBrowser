@@ -1,8 +1,11 @@
 
 // Called when page is loaded
 function onLoad() {
+		handleOversizedTables();
+		handleOversizedImages();
     handleCollapsibleBlocks();
     handleFootnotes();
+
 }
 
 Element.prototype.documentOffsetTop = function () {
@@ -113,4 +116,12 @@ function handleFootnotes() {
 
   footnoterefs();
   footnotes();
+}
+function handleOversizedImages() {
+	$(".scp-image-block").css("width","");
+  $(".scp-image-block").children("img").css("width","");
+  $(".scp-image-caption").css("width","");
+}
+function handleOversizedTables() {
+	$(".wiki-content-table").wrap("<div class='table-wrapper'></div>");
 }
