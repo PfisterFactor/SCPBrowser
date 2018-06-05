@@ -6,4 +6,9 @@
     <string name="nav_header_subtitle">android.studio@android.com</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
+    <string name="series_iv">Series IV (3000-3999)</string>
+    <string name="series_iii">Series III (2000-2999)</string>
+    <string name="series_ii">Series II (1000-1999)</string>
+    <string name="series_i">Series I (001-999)</string>
+    <string name="scp_home">SCP Home</string>
 </resources>

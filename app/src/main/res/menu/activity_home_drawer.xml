@@ -7,35 +7,35 @@
         <item
             android:id="@+id/nav_scp_home"
             android:icon="@drawable/ic_menu_manage"
-            android:title="SCP Home" />
+            android:title="@string/scp_home" />
         <item
             android:id="@+id/nav_series_I"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Series I (001-999)" />
+            android:title="@string/series_i" />
         <item
             android:id="@+id/nav_series_II"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Series II (1000-1999)" />
+            android:title="@string/series_ii" />
         <item
             android:id="@+id/nav_series_III"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Series III (2000-2999)" />
+            android:title="@string/series_iii" />
         <item
             android:id="@+id/nav_series_IV"
             android:icon="@drawable/ic_menu_manage"
-            android:title="Series IV (3000-3999)" />
+            android:title="@string/series_iv" />
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Unimplemented">
         <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
-                android:title="Share" />
+                android:title="Unimplemented" />
             <item
                 android:id="@+id/nav_send"
                 android:icon="@drawable/ic_menu_send"
-                android:title="Send" />
+                android:title="Unimplemented" />
         </menu>
     </item>
 

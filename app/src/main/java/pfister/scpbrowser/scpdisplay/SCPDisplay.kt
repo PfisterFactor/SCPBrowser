@@ -20,6 +20,33 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
     var CurrentSCPPage: String = SCPDisplay.INVALID_PAGE
 
+    private fun injectLocalResources(scppage:SCPPage) {
+        val STYLESHEET = """
+            |<link href="scp-theme1.css" type="text/css" rel="stylesheet">
+            |<link href="scp-theme2.css" type="text/css" rel="stylesheet">
+            |
+            """.trimMargin()
+        val JAVASCRIPT = """
+                |<script type="text/javascript" src="jquery.js"></script>
+                |<script type="text/javascript" src="tooltip.js"></script>
+                |<script type="text/javascript" src="scp.js"></script>
+                |
+            """.trimMargin()
+        scppage.PageContent = STYLESHEET + JAVASCRIPT + "<body onload=\"onLoad()\">" + scppage.PageContent + "</body>"
+    }
+    private fun stripUnwantedElements(scppage: SCPPage) {
+        val unwantedRatingBox = "<div class=\"page-rate-widget-box\">"
+
+        val index = scppage.PageContent?.indexOf(unwantedRatingBox)
+        if (index == null || index == -1) return
+
+        val indexOfEndTag = scppage.PageContent?.indexOf("</div>",index)
+        if (indexOfEndTag == null || indexOfEndTag == -1) return
+
+        // 6 is the length of "</div>"
+        scppage.PageContent = scppage.PageContent?.removeRange(index, indexOfEndTag + 6)
+    }
+
     // Downloads the SCP page and injects the local CSS
     private fun downloadAndPrepareSCP(scp: String): SCPPage? {
         val response = SCPService()?.getSCPPage(scp)?.execute()
@@ -28,8 +55,8 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
         val page = response.body()!!
 
-        SCPPageService.stripUnwantedElements(page)
-        SCPPageService.injectLocalResources(page)
+        stripUnwantedElements(page)
+        injectLocalResources(page)
         return page
 
     }
