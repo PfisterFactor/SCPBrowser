@@ -85,6 +85,25 @@ table.wiki-content-table th{
     padding:0.3em 0.7em;
     background-color:#EEE
 }
+#toc{
+    margin:1em auto 1em 0;
+    padding:0em 0.5em;
+    border:1px dashed gray;
+    background-color:#F7F7F7;
+    display:table
+}
+#toc .title{
+    font-weight:bold;
+    margin:0.2em 0;
+    padding:0 2em;
+    text-align:center
+}
+#toc #toc-action-bar{
+    padding:2px
+}
+#toc-list{
+    margin:0.5em 0
+}
 tt{
     font:98% 'Andale Mono','Courier New',Courier,monospace
 }
@@ -141,6 +160,15 @@ table.page-compare td,table.page-compare th{
 }
 .printuser a{
     margin-right:-1px
+}
+.printuser img.small{
+    vertical-align:-0.3em;
+    margin:0 1px 0 0;
+    width:16px;
+    height:16px;
+    z-index:0;
+    padding:1px 9px 1px 8px;
+    background:no-repeat center left
 }
 a.avatar-hover,a.avatar-hover:hover{
     background:url(../images/background/opacity2.png);
