@@ -1,8 +1,8 @@
 
 // Called when page is loaded
 function onLoad() {
-		handleOversizedTables();
-		handleOversizedImages();
+	handleOversizedTables();
+	handleOversizedImages();
     handleCollapsibleBlocks();
     handleFootnotes();
 
