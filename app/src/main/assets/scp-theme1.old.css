@@ -12,9 +12,6 @@ body
 	font-size: 0.82em;
 }
 
-
-
-
 /* HEADINGS */
 
 h1,h2,h3,h4,h5,h6{
@@ -93,10 +90,6 @@ a.newpage{
 
 #container-wrap-wrap {
 	position: relative;
-}
-
-#page-content {
-
 }
 
 #container {
