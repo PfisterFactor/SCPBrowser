@@ -69,6 +69,13 @@ a.newpage{
     /_3token_hck_3:*/
     visibility:visible
 }
+/* Handles scrolling on tables */
+.table-wrapper {
+	display: block;
+	overflow-x:scroll;
+	-webkit-overflow-scrolling: touch;
+}
+
 table.wiki-content-table{
     border-collapse:collapse;
     border-spacing:0;
