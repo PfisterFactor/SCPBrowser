@@ -10,8 +10,8 @@ import pfister.scpbrowser.scpdata.SCPPageService
 
 class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     companion object {
-        val HOME_PAGE:String = ""
-        val INVALID_PAGE:String = "¯\\_(ツ)_/¯"
+        const val HOME_PAGE:String = ""
+        const val INVALID_PAGE:String = "¯\\_(ツ)_/¯"
         fun SeriesPage(i:Int): String = if (i <= 1) "scp-series" else "scp-series-$i"
     }
     constructor(context:Context):this(context,null)

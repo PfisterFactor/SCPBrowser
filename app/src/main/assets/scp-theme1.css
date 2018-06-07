@@ -729,6 +729,14 @@ a.bibcite{
 	text-align: center;
 }
 
+.footnote-footer a {
+   display: inline-block;
+   position: relative;
+   z-index: 1;
+   padding: 0 2em;
+   margin: 0 -2em;
+}
+
 .gallery-item.square {
 	width: 85px;
 	height: 85px;
