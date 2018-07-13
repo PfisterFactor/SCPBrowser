@@ -70,6 +70,7 @@ a.newpage{
     visibility:visible
 }
 /* Handles scrolling on tables */
+
 .table-wrapper {
 	display: block;
 	overflow-x:scroll;

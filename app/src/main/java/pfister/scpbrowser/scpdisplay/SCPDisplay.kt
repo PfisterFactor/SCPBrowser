@@ -22,7 +22,8 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
     private fun injectLocalResources(scppage:SCPPage) {
         val STYLESHEET = """
-            |<link href="scp-theme.css" type="text/css" rel="stylesheet">
+            |<link href="scp-theme1.old.css" type="text/css" rel="stylesheet">
+            |<link href="scp-theme2.old.css" type="text/css" rel="stylesheet">
             |
             """.trimMargin()
         val JAVASCRIPT = """
