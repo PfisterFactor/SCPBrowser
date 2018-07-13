@@ -3,8 +3,10 @@
 function onLoad() {
 	handleOversizedTables();
 	handleOversizedImages();
-    handleCollapsibleBlocks();
-    handleFootnotes();
+  handleCollapsibleBlocks();
+  handleFootnotes();
+  handleYUITabView();
+
 
 }
 
@@ -101,6 +103,11 @@ function handleFootnotes() {
       footnote.addEventListener("click", function() {
       var footnoteNumber = $(this).get(0).parentElement.id.replace(/^footnote\-/, "");
       	var footnoteref = $("#footnoteref-"+footnoteNumber);
+        var tabview_to_select = footnoteref.closest("div");
+        if (tabview_to_select.length != 0 && tabview_to_select.get(0).id.startsWith("wiki-tab")) {
+        	var index = parseInt(tabview_to_select.get(0).id.replace("wiki-tab-0-",""));
+        	tabview_to_select.parent().prev(".yui-nav").get(0).children.item(index).click();
+        }
         var collapsible_block_to_unfold = footnoteref.closest("div.collapsible-block");
         if (collapsible_block_to_unfold.length != 0) {
         	var folded_block = collapsible_block_to_unfold.children(".collapsible-block-folded")
@@ -121,7 +128,26 @@ function handleOversizedImages() {
 	$(".scp-image-block").css("width","");
   $(".scp-image-block").children("img").css("width","");
   $(".scp-image-caption").css("width","");
+  $(".image").css("width","");
 }
 function handleOversizedTables() {
 	$(".wiki-content-table").wrap("<div class='table-wrapper'></div>");
+}
+function handleYUITabView() {
+	$(".yui-nav").children("li").click(function() {
+  	var element = $(this);
+    var index = Array.prototype.indexOf.call(element.parent().get(0).children, $(this).get(0));
+  	element.siblings().attr({
+    class: "",
+    title: ""
+    });
+    element.attr({
+    class: "selected",
+    title: "active"
+    })
+    var yui_content = element.parent().next(".yui-content");
+    yui_content.children().css("display","none");
+    yui_content.children("#wiki-tab-0-"+index).css("display","block");
+  })
+
 }
