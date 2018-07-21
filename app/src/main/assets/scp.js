@@ -1,8 +1,7 @@
-
 // Called when page is loaded
 function onLoad() {
-	handleOversizedTables();
-	handleOversizedImages();
+  handleOversizedTables();
+  handleOversizedImages();
   handleCollapsibleBlocks();
   handleFootnotes();
   handleYUITabView();
@@ -125,7 +124,7 @@ function handleFootnotes() {
   footnotes();
 }
 function handleOversizedImages() {
-	$(".scp-image-block").css("width","");
+  $(".scp-image-block").css("width","");
   $(".scp-image-block").children("img").css("width","");
   $(".scp-image-caption").css("width","");
   $(".image").css("width","");

@@ -56,11 +56,12 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         scp_display.settings.loadWithOverviewMode = true
 
         scp_display.webViewClient = object : WebViewClient() {
-            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean = onURLNavigate(request)
+            override fun shouldOverrideUrlLoading(view: WebView, request: WebResourceRequest): Boolean = request.hasGesture() && onResourceRequest(request)
+
         }
     }
 
-    fun onURLNavigate(request:WebResourceRequest):Boolean  {
+    fun onResourceRequest(request:WebResourceRequest):Boolean  {
         val scpURL = request.url.path.drop(1)
         displayAndUpdateStack(scpURL)
         return true
