@@ -4,9 +4,9 @@ import android.arch.lifecycle.ViewModel
 import java.util.*
 
 class HomeViewModel : ViewModel() {
-    var SCPPagesVisited: Stack<String> = Stack()
+    var SCPPagesVisited: Stack<Int> = Stack()
 
-    fun CurrentSCPPage(): String {
+    fun CurrentSCPPage(): Int {
         if (SCPPagesVisited.empty())
             return SCPDisplay.INVALID_PAGE
 

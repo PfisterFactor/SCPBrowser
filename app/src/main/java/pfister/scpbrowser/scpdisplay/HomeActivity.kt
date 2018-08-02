@@ -17,11 +17,9 @@ import kotlinx.android.synthetic.main.activity_home.*
 import kotlinx.android.synthetic.main.app_bar_home.*
 import kotlinx.android.synthetic.main.content_home.*
 import pfister.scpbrowser.R
-import pfister.scpbrowser.SCPApplication
 
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    fun SCPService() = (application as SCPApplication).SCPService
 
     private var viewmodel: HomeViewModel? = null
 
@@ -62,38 +60,38 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     fun onResourceRequest(request:WebResourceRequest):Boolean  {
         val scpURL = request.url.path.drop(1)
-        displayAndUpdateStack(scpURL)
+//        displayAndUpdateStack(scpURL)
         return true
     }
 
-    private fun displayAndUpdateStack(scp:String):Boolean {
-        if (scp == viewmodel?.CurrentSCPPage()) return false
-        if (scp_display.displaySCPPage(scp)) {
-            viewmodel?.SCPPagesVisited?.push(scp)
-            updateTitle(scp)
+    private fun displayAndUpdateStack(page_ID:Int):Boolean {
+        if (page_ID == viewmodel?.CurrentSCPPage()) return false
+        if (scp_display.displaySCPPage(page_ID)) {
+            viewmodel?.SCPPagesVisited?.push(page_ID)
+            //updateTitle(viewmodel?.CurrentSCPPage()?)
             return true
         }
         return false
             
     }
-    // Handles edge cases and updates the title of the activity
-    private fun updateTitle(newTitle:String?) {
-        // If the title passed is null, invalid, or it's the home page (redirected), just display "SCP Browser"
-        title = if (newTitle == null || newTitle == SCPDisplay.INVALID_PAGE || newTitle.startsWith("main/html/"))
-            "SCP Browser"
-        else {
-            if (newTitle.startsWith("scp-"))
-                newTitle.toUpperCase()
-            else
-                newTitle.capitalize()
-        }
-
-    }
+//    // Handles edge cases and updates the title of the activity
+//    private fun updateTitle(newTitle:String?) {
+//        // If the title passed is null, invalid, or it's the home page (redirected), just display "SCP Browser"
+//        title = if (newTitle == null || newTitle == SCPDisplay.INVALID_PAGE || newTitle.startsWith("main/html/"))
+//            "SCP Browser"
+//        else {
+//            if (newTitle.startsWith("scp-"))
+//                newTitle.toUpperCase()
+//            else
+//                newTitle.capitalize()
+//        }
+//
+//    }
 
     override fun onStart() {
         super.onStart()
-        val page = if (viewmodel?.CurrentSCPPage() == SCPDisplay.INVALID_PAGE) "" else viewmodel?.CurrentSCPPage().orEmpty()
-        displayAndUpdateStack(page)
+//        val page = if (viewmodel?.CurrentSCPPage() == SCPDisplay.INVALID_PAGE) "" else viewmodel?.CurrentSCPPage().orEmpty()
+        displayAndUpdateStack(SCPDisplay.HOME_PAGE)
     }
 
     // Called when back button on phone is pressed
@@ -103,7 +101,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             scp_display.canGoBack() -> {
                 scp_display.goBack()
                 viewmodel?.SCPPagesVisited?.pop()
-                updateTitle(viewmodel?.CurrentSCPPage())
+//                updateTitle(viewmodel?.CurrentSCPPage())
             }
             else -> {
                 viewmodel?.SCPPagesVisited?.clear()
@@ -133,19 +131,19 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         when (item.itemId) {
             R.id.nav_scp_home -> {
                 // Navigates back to the SCP homepage
-                displayAndUpdateStack("")
+                displayAndUpdateStack(SCPDisplay.HOME_PAGE)
             }
             R.id.nav_series_I -> {
-                displayAndUpdateStack(SCPDisplay.SeriesPage(1))
+//                displayAndUpdateStack(SCPDisplay.SeriesPage(1))
             }
             R.id.nav_series_II -> {
-                displayAndUpdateStack(SCPDisplay.SeriesPage(2))
+//                displayAndUpdateStack(SCPDisplay.SeriesPage(2))
             }
             R.id.nav_series_III -> {
-                displayAndUpdateStack(SCPDisplay.SeriesPage(3))
+//                displayAndUpdateStack(SCPDisplay.SeriesPage(3))
             }
             R.id.nav_series_IV -> {
-                displayAndUpdateStack(SCPDisplay.SeriesPage(4))
+//                displayAndUpdateStack(SCPDisplay.SeriesPage(4))
             }
         }
 

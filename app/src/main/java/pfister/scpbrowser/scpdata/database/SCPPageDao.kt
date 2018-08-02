@@ -5,11 +5,11 @@ import pfister.scpbrowser.scpdata.SCPPage
 
 @Dao
 interface SCPPageDao {
-    @Query("SELECT * FROM scppage WHERE id=:id LIMIT 1")
-    fun getSCPPage(id:String):SCPPage
+    @Query("SELECT * FROM scppage WHERE page_id=:page_id LIMIT 1")
+    fun getSCPPage(page_id:Int):SCPPage
 
-    @Query("DELETE FROM scppage WHERE id=:id")
-    fun deleteSCPPage(id:String)
+    @Query("DELETE FROM scppage WHERE page_id=:page_id")
+    fun deleteSCPPage(page_id:String)
 
     @Insert
     // Add a SCP page
