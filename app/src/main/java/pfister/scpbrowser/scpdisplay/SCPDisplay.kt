@@ -9,8 +9,10 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import org.json.JSONObject
 import pfister.scpbrowser.SCPApplication
 import pfister.scpbrowser.scpdata.SCPPage
+import pfister.scpbrowser.scprender.TextWikiEngine
 
 class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     companion object {
@@ -37,6 +39,8 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     var OkHTTP = ((context as HomeActivity).application as SCPApplication).OkHTTP
 
     var CurrentSCPPage: Int = SCPDisplay.INVALID_PAGE
+
+    val TextEngine: TextWikiEngine = TextWikiEngine()
 
 //    private fun injectLocalResources(scppage:SCPPage) {
 //        val STYLESHEET = """
@@ -74,7 +78,9 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
         if (!response.isSuccessful) return null
 
         val page = SCPPage()
-        page.Page_Source = response.body()?.string()!!
+        val json = JSONObject(response.body()?.string()!!)
+
+        page.Page_Source = json.getString("body")
 
         return page
 
@@ -86,8 +92,10 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
         doAsync{
             val page = downloadAndPrepareSCP(page_ID)
             if (page != null) {
+                val parsed = TextEngine.transform(page.Page_Source)
                 uiThread {
-                    this@SCPDisplay.loadDataWithBaseURL("file:///android_asset/", page.Page_Source, "text/html", "UTF-8",null)
+
+                    this@SCPDisplay.loadDataWithBaseURL("file:///android_asset/", parsed, "text/html", "UTF-8",null)
 
                     CurrentSCPPage = page_ID
                 }

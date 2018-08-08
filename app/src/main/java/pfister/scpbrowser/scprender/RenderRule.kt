@@ -3,15 +3,21 @@ package pfister.scpbrowser.scprender
 interface RenderRule {
 
     // Name of the rule
-    val Rule_Name:String
+    val rule_name:String
 
     // Regex for the rule
-    val Regex:Regex
+    val regex:Regex
 
-    // Finds tokens corresponding to the rule using regex and any additional processing
-    fun parse(source:String): Array<String>
+    // Reference to the text engine
+    val text_engine: TextWikiEngine
 
-    // Replaces the matches with their html counterparts
-    fun process(matches:Array<String>): String
+    // Finds tokens corresponding to the rule using regex and pass them to process
+    fun parse()
+
+    // The callback for the regex replace, adds tokens usually
+    fun process(match: MatchResult): CharSequence
+
+    // Turns the tokens into html to display
+    fun render(token: TextToken): String
 
 }
