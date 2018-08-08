@@ -9,15 +9,13 @@ class RuleDiv(override val text_engine: TextWikiEngine) : RuleDefault() {
 
     val end_regex = """\[\[\/div]]""".toRegex()
     override fun parse() {
-        text_engine.source = regex.replace(text_engine.source) { x -> process(x) }
-        text_engine.source = end_regex.replace(text_engine.source) { x -> process(x) }
+        regexReplace(regex) {x -> process(x)}
+        regexReplace(end_regex) {x -> process_end_div(x)}
 
     }
+
     override fun process(match: MatchResult): CharSequence {
 
-        if (match.value.contains("[[/div]]")) {
-            return text_engine.addToken(rule_name, mapOf("type" to "end_div"))
-        }
         val text = match.groupValues[2]
 
         val token_start = text_engine.addToken(rule_name, mapOf("type" to "start_div_start"))
@@ -27,6 +25,8 @@ class RuleDiv(override val text_engine: TextWikiEngine) : RuleDefault() {
         return "$token_start$text$token_end"
     }
 
+    fun process_end_div(match:MatchResult): CharSequence = text_engine.addToken(rule_name, mapOf("type" to "end_div"))
+
     override fun render(token: TextToken): String {
         return when (token.getString("type")) {
             "end_div" -> "</div>"
@@ -35,6 +35,7 @@ class RuleDiv(override val text_engine: TextWikiEngine) : RuleDefault() {
             else -> ""
         }
     }
+
 
 
 

@@ -7,7 +7,7 @@ import pfister.scpbrowser.scprender.TextWikiEngine
 abstract class RuleDefault : RenderRule {
 
     override fun parse() {
-        text_engine.source = regex.replace(text_engine.source) { x -> process(x) }
+        regexReplace(regex) {x -> process(x)}
     }
 
     override fun process(match: MatchResult): CharSequence {
@@ -39,6 +39,10 @@ abstract class RuleDefault : RenderRule {
 
         }
         return attrs.toMap()
+    }
+
+    fun regexReplace(reg: Regex,callback: (MatchResult) -> CharSequence) {
+        text_engine.source = reg.replace(text_engine.source) { x -> callback(x) }
     }
 
 }
