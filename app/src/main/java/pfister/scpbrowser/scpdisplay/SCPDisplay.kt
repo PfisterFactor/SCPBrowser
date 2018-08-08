@@ -1,6 +1,7 @@
 package pfister.scpbrowser.scpdisplay
 
 import android.content.Context
+import android.text.Html
 import android.util.AttributeSet
 import android.webkit.WebSettings
 import android.webkit.WebView
@@ -79,8 +80,8 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
         val page = SCPPage()
         val json = JSONObject(response.body()?.string()!!)
-
-        page.Page_Source = json.getString("body")
+        val decoded = Html.fromHtml(json.getString("body")).toString()
+        page.Page_Source = decoded
 
         return page
 

@@ -4,14 +4,9 @@ import pfister.scpbrowser.scprender.RenderRule
 import pfister.scpbrowser.scprender.TextToken
 import pfister.scpbrowser.scprender.TextWikiEngine
 
-class RuleStrong(override val text_engine: TextWikiEngine) : RenderRule {
+class RuleStrong(override val text_engine: TextWikiEngine) : RuleDefault() {
     override val regex: Regex = """\*\*([^\s\n](?:.*[^\s\n])?)\*\*""".toRegex()
-    override val rule_name: String = "strong"
-
-    override fun parse() {
-        text_engine.source = regex.replace(text_engine.source) { x -> process(x) }
-
-    }
+    override val rule_name: String = "Strong"
 
     override fun process( match: MatchResult): CharSequence {
         val start = text_engine.addToken(rule_name, mapOf("type" to "start"))
@@ -22,7 +17,7 @@ class RuleStrong(override val text_engine: TextWikiEngine) : RenderRule {
     }
 
     override fun render(token: TextToken): String {
-        return when (token.options["type"]) {
+        return when (token.getString("type")) {
             "start" -> {
                 val css = "" // Todo
                 "<strong$css>"

@@ -1,8 +1,7 @@
 package pfister.scpbrowser.scprender
 
+import pfister.scpbrowser.scprender.renderrules.RuleDiv
 import pfister.scpbrowser.scprender.renderrules.RuleStrong
-
-class TextToken(val rule_name:String, val options:Map<String,String>)
 
 // The text engine used to convert the SCP source input to an HTML output
 class TextWikiEngine {
@@ -94,13 +93,14 @@ class TextWikiEngine {
 
     var source = ""
 
-    val render_rules = mapOf<String,RenderRule>(
-            "strong" to RuleStrong(this)
+    private val render_rules = mapOf<String,RenderRule>(
+            "Div" to RuleDiv(this),
+            "Strong" to RuleStrong(this)
     )
 
     fun transform(text:String): String {
         // Set the source text
-        source = text
+        source = "" + text
 
         // Clear the tokens
         tokens = listOf()
@@ -117,25 +117,34 @@ class TextWikiEngine {
             rule.parse()
         }
     }
+
+    // Unsure if needed or not yet
     private fun preRender() {
 
     }
 
+    // Steps through the source string and builds a new, formatted and rendered, html string
     private fun render(): String {
+        preRender()
 
+        // The builder we'll use to construct the rendered string
         val output = StringBuilder(source.length)
 
+        // Is the current char inside a token deliminator
         var in_delim = false
 
-        var key_string = ""
+        // The string within the deliminators
+        // Should only be numeric, which allows us to cast it to an int later and use it as an index
+        val token_id_string = StringBuilder()
 
-
+        // Step through all the characters in the source
         for (char in source) {
+            // If we're already inside a deliminator
             if (in_delim) {
+                // Check if the current character is the ending to the token id
                 if (char == delim) {
 
-                    // Confusing way of finding the first number in a string
-                    val int_key = key_string.toInt()
+                    val int_key = token_id_string.toString().toInt()
                     val token = tokens[int_key]
                     val rule = token.rule_name
 
@@ -143,12 +152,13 @@ class TextWikiEngine {
                     in_delim = false
                 }
                 else {
-                    key_string += char
+                    token_id_string.append(char)
                 }
             }
             else {
+                // If we're starting a token ID
                 if (char == delim) {
-                    key_string = ""
+                    token_id_string.delete(0,token_id_string.capacity())
                     in_delim = true
                 }
                 else {
@@ -159,7 +169,7 @@ class TextWikiEngine {
         return output.toString()
     }
 
-    fun addToken(rule:String, options:Map<String,String>, id_only:Boolean = false): String {
+    fun addToken(rule:String, options:Map<String,Any>, id_only:Boolean = false): String {
         val newToken = TextToken(rule,options)
         tokens += newToken
         nextTokenID++
