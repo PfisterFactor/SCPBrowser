@@ -2,6 +2,7 @@ package pfister.scpbrowser.scprender
 
 import pfister.scpbrowser.scprender.renderrules.RuleDiv
 import pfister.scpbrowser.scprender.renderrules.RuleStrong
+import pfister.scpbrowser.scprender.renderrules.RuleURL
 
 // The text engine used to convert the SCP source input to an HTML output
 class TextWikiEngine {
@@ -95,6 +96,7 @@ class TextWikiEngine {
 
     private val render_rules = mapOf<String,RenderRule>(
             "Div" to RuleDiv(this),
+            "Url" to RuleURL(this),
             "Strong" to RuleStrong(this)
     )
 
