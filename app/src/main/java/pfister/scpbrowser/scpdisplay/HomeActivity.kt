@@ -59,39 +59,37 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun onResourceRequest(request:WebResourceRequest):Boolean  {
-        val scpURL = request.url.path.drop(1)
-//        displayAndUpdateStack(scpURL)
+        displayAndUpdateStack(request.url.toString())
         return true
     }
 
-    private fun displayAndUpdateStack(page_ID:Int):Boolean {
-        if (page_ID == viewmodel?.CurrentSCPPage()) return false
-        if (scp_display.displaySCPPage(page_ID)) {
-            viewmodel?.SCPPagesVisited?.push(page_ID)
-            //updateTitle(viewmodel?.CurrentSCPPage()?)
+    private fun displayAndUpdateStack(page:String):Boolean {
+        if (scp_display.displaySCPPage(page)) {
+            viewmodel?.SCPPagesVisited?.push(scp_display.CurrentSCPID)
+            updateTitle(page)
             return true
         }
         return false
             
     }
-//    // Handles edge cases and updates the title of the activity
-//    private fun updateTitle(newTitle:String?) {
-//        // If the title passed is null, invalid, or it's the home page (redirected), just display "SCP Browser"
-//        title = if (newTitle == null || newTitle == SCPDisplay.INVALID_PAGE || newTitle.startsWith("main/html/"))
-//            "SCP Browser"
-//        else {
-//            if (newTitle.startsWith("scp-"))
-//                newTitle.toUpperCase()
-//            else
-//                newTitle.capitalize()
-//        }
-//
-//    }
+    // Handles edge cases and updates the title of the activity
+    private fun updateTitle(newTitle:String?) {
+        // If the title passed is null, invalid, or it's the home page (redirected), just display "SCP Browser"
+        title = if (newTitle == null || newTitle == SCPDisplay.INVALID_PAGE)
+            "SCP Browser"
+        else {
+            if (newTitle.startsWith("scp-"))
+                newTitle.toUpperCase()
+            else
+                newTitle.capitalize()
+        }
+
+    }
 
     override fun onStart() {
         super.onStart()
-//        val page = if (viewmodel?.CurrentSCPPage() == SCPDisplay.INVALID_PAGE) "" else viewmodel?.CurrentSCPPage().orEmpty()
-        displayAndUpdateStack(SCPDisplay.HOME_PAGE)
+        val page = if (viewmodel?.CurrentSCPPage() == SCPDisplay.INVALID_PAGE_ID) SCPDisplay.HOME_PAGE else scp_display.CurrentSCPPage?.URL.orEmpty()
+        displayAndUpdateStack(page)
     }
 
     // Called when back button on phone is pressed
@@ -101,7 +99,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             scp_display.canGoBack() -> {
                 scp_display.goBack()
                 viewmodel?.SCPPagesVisited?.pop()
-//                updateTitle(viewmodel?.CurrentSCPPage())
+                updateTitle(scp_display.CurrentSCPPage?.Page_Details?.Page_Name)
             }
             else -> {
                 viewmodel?.SCPPagesVisited?.clear()

@@ -8,7 +8,7 @@ class HomeViewModel : ViewModel() {
 
     fun CurrentSCPPage(): Int {
         if (SCPPagesVisited.empty())
-            return SCPDisplay.INVALID_PAGE
+            return SCPDisplay.INVALID_PAGE_ID
 
         return SCPPagesVisited.peek()
     }

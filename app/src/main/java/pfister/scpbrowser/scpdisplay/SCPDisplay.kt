@@ -6,6 +6,7 @@ import android.util.AttributeSet
 import android.webkit.WebSettings
 import android.webkit.WebView
 import okhttp3.MediaType
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.jetbrains.anko.doAsync
@@ -13,12 +14,15 @@ import org.jetbrains.anko.uiThread
 import org.json.JSONObject
 import pfister.scpbrowser.SCPApplication
 import pfister.scpbrowser.scpdata.SCPPage
+import pfister.scpbrowser.scpdata.SCPPageDetails
 import pfister.scpbrowser.scprender.TextWikiEngine
 
 class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     companion object {
-        const val HOME_PAGE:Int = 1946911
-        const val INVALID_PAGE:Int = -1
+        const val HOME_PAGE:String = "http://www.scp-wiki.net"
+        const val HOME_PAGE_ID:Int = 1946911
+        const val INVALID_PAGE:String = "invalid_page"
+        const val INVALID_PAGE_ID: Int = -1
 
         fun requestSource(page_ID: Int): Request {
             val body: RequestBody = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"),"page_id=$page_ID&moduleName=viewsource%2FViewSourceModule")
@@ -31,6 +35,23 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
                     .build()
 
         }
+        // Returns the details for a page
+        // Currently does it very inefficiently, scrapes the page for a WIKIREQUEST object and takes it from there
+        // Is blocking
+        fun getPageDetails(okHttp: OkHttpClient, url:String): SCPPageDetails? {
+
+            val request = Request.Builder()
+                    .url(url)
+                    .build()
+
+            val response = okHttp.newCall(request).execute()
+            if (!response.isSuccessful) return null
+            if (response.body() == null) return null
+
+            val body = response.body()!!
+
+            return SCPPageDetails.scrapePage(body.string())
+        }
     }
     constructor(context:Context):this(context,null) {
         settings.setAppCacheEnabled(false)
@@ -39,7 +60,8 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
     var OkHTTP = ((context as HomeActivity).application as SCPApplication).OkHTTP
 
-    var CurrentSCPPage: Int = SCPDisplay.INVALID_PAGE
+    var CurrentSCPID: Int = SCPDisplay.INVALID_PAGE_ID
+    var CurrentSCPPage: SCPPage? = null
 
     val TextEngine: TextWikiEngine = TextWikiEngine()
 
@@ -70,18 +92,24 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 //    }
 
     // Downloads the SCP page and injects the local CSS
-    private fun downloadAndPrepareSCP(page_ID:Int): SCPPage? {
+    private fun downloadAndPrepareSCP(url:String): SCPPage? {
 
-        val request = requestSource(page_ID)
 
-        val response = OkHTTP?.newCall(request)?.execute()!!
+        val details = getPageDetails(OkHTTP!!,url) ?: return null
 
-        if (!response.isSuccessful) return null
+        val page_source_request = requestSource(details.Page_ID)
+
+        val page_source_response = OkHTTP?.newCall(page_source_request)?.execute()!!
+
+
+        if (!page_source_response.isSuccessful) return null
 
         val page = SCPPage()
-        val json = JSONObject(response.body()?.string()!!)
+        val json = JSONObject(page_source_response.body()?.string()!!)
         val decoded = Html.fromHtml(json.getString("body")).toString()
         page.Page_Source = decoded
+        page.Page_Details = details
+        page.Page_ID = details.Page_ID
 
         return page
 
@@ -89,16 +117,18 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
     // Displays the SCP page from the database if its available, otherwise downloads and displays it
     // Todo: Implement database usage
-    fun displaySCPPage(page_ID:Int): Boolean {
+    fun displaySCPPage(url:String): Boolean {
         doAsync{
-            val page = downloadAndPrepareSCP(page_ID)
+            val page = downloadAndPrepareSCP(url)
+            if (page?.Page_ID == CurrentSCPID) return@doAsync
             if (page != null) {
                 val parsed = TextEngine.transform(page.Page_Source)
                 uiThread {
 
                     this@SCPDisplay.loadDataWithBaseURL("file:///android_asset/", parsed, "text/html", "UTF-8",null)
 
-                    CurrentSCPPage = page_ID
+                    CurrentSCPID = page.Page_ID
+                    CurrentSCPPage = page
                 }
             }
         }
