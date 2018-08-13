@@ -60,11 +60,17 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
     var OkHTTP = ((context as HomeActivity).application as SCPApplication).OkHTTP
 
-    var CurrentSCPID: Int = SCPDisplay.INVALID_PAGE_ID
-    var CurrentSCPPage: SCPPage? = null
-
     val TextEngine: TextWikiEngine = TextWikiEngine()
 
+    fun History(): SCPHistory? = (context as HomeActivity).viewmodel?.SCPHistory
+
+    fun CurrentPage(): SCPHistoryEntry? = History()?.CurrentPage()
+
+    override fun goBack() {
+        super.goBack()
+        History()?.popPage()
+
+    }
 //    private fun injectLocalResources(scppage:SCPPage) {
 //        val STYLESHEET = """
 //            |<link href="scp-theme.old.css" type="text/css" rel="stylesheet">
@@ -120,15 +126,16 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     fun displaySCPPage(url:String): Boolean {
         doAsync{
             val page = downloadAndPrepareSCP(url)
-            if (page?.Page_ID == CurrentSCPID) return@doAsync
+            if (page?.Page_ID == CurrentPage()?.Page_ID) return@doAsync
             if (page != null) {
                 val parsed = TextEngine.transform(page.Page_Source)
                 uiThread {
 
                     this@SCPDisplay.loadDataWithBaseURL("file:///android_asset/", parsed, "text/html", "UTF-8",null)
 
-                    CurrentSCPID = page.Page_ID
-                    CurrentSCPPage = page
+                    this@SCPDisplay.History()?.addPage(SCPHistoryEntry(url,page.Page_ID,page.Page_Details!!))
+
+                    (this@SCPDisplay.context as HomeActivity).updateTitle(CurrentPage()?.Details?.Page_Name)
                 }
             }
         }

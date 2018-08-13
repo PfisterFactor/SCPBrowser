@@ -21,7 +21,7 @@ import pfister.scpbrowser.R
 class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
 
-    private var viewmodel: HomeViewModel? = null
+    var viewmodel: HomeViewModel? = null
 
     // Called on creation of activity
     @SuppressLint("SetJavaScriptEnabled")
@@ -64,16 +64,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private fun displayAndUpdateStack(page:String):Boolean {
-        if (scp_display.displaySCPPage(page)) {
-            viewmodel?.SCPPagesVisited?.push(scp_display.CurrentSCPID)
-            updateTitle(page)
-            return true
-        }
-        return false
+        return scp_display.displaySCPPage(page)
             
     }
     // Handles edge cases and updates the title of the activity
-    private fun updateTitle(newTitle:String?) {
+    fun updateTitle(newTitle:String?) {
         // If the title passed is null, invalid, or it's the home page (redirected), just display "SCP Browser"
         title = if (newTitle == null || newTitle == SCPDisplay.INVALID_PAGE)
             "SCP Browser"
@@ -88,8 +83,11 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     override fun onStart() {
         super.onStart()
-        val page = if (viewmodel?.CurrentSCPPage() == SCPDisplay.INVALID_PAGE_ID) SCPDisplay.HOME_PAGE else scp_display.CurrentSCPPage?.URL.orEmpty()
-        displayAndUpdateStack(page)
+        val page = viewmodel?.SCPHistory?.CurrentPage()
+        if (page == null)
+            displayAndUpdateStack(SCPDisplay.HOME_PAGE)
+        else
+            displayAndUpdateStack(page.URL)
     }
 
     // Called when back button on phone is pressed
@@ -98,11 +96,10 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             drawer_layout.isDrawerOpen(GravityCompat.START) -> drawer_layout.closeDrawer(GravityCompat.START)
             scp_display.canGoBack() -> {
                 scp_display.goBack()
-                viewmodel?.SCPPagesVisited?.pop()
-                updateTitle(scp_display.CurrentSCPPage?.Page_Details?.Page_Name)
+                updateTitle(scp_display.CurrentPage()?.Details?.Page_Name)
             }
             else -> {
-                viewmodel?.SCPPagesVisited?.clear()
+                scp_display.History()?.clear()
                 super.onBackPressed()
             }
         }
