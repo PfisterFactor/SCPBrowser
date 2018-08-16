@@ -34,8 +34,8 @@ abstract class RuleDefault : RenderRule {
             }
 
             val pos = value.lastIndexOf('"')
-            attrs[key] = stripslashes(value.substring(0,pos))
-            key = value.substring(pos+1)
+            attrs[key] = stripslashes(value.substring(0,pos)).trim()
+            key = value.substring(pos+1).trim()
 
         }
         return attrs.toMap()

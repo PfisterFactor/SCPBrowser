@@ -1,6 +1,7 @@
 package pfister.scpbrowser.scprender
 
 import pfister.scpbrowser.scprender.renderrules.RuleDiv
+import pfister.scpbrowser.scprender.renderrules.RuleImage
 import pfister.scpbrowser.scprender.renderrules.RuleStrong
 import pfister.scpbrowser.scprender.renderrules.RuleURL
 
@@ -88,6 +89,7 @@ class TextWikiEngine {
 
 
     val delim = 0xff.toChar()
+    val local_files_base_url = "http://scp-wiki.wdfiles.com/local--files/main/"
 
     private var nextTokenID:Int = 0
     private var tokens: List<TextToken> = listOf()
@@ -96,6 +98,7 @@ class TextWikiEngine {
 
     private val render_rules = mapOf<String,RenderRule>(
             "Div" to RuleDiv(this),
+            "Image" to RuleImage(this),
             "Url" to RuleURL(this),
             "Strong" to RuleStrong(this)
     )
