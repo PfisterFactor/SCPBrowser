@@ -45,13 +45,13 @@ class PageDetailsConverter {
     @TypeConverter
     fun toPageDetails(value: String?):SCPPageDetails? {
         val array = value?.split(",")
-        if (array == null || array.size < 4) return null
-        return SCPPageDetails(array[0].toInt(),array[1].toInt(),array[2],array[3])
+        if (array == null || array.size < 5) return null
+        return SCPPageDetails(array[0].toInt(),array[1].toInt(),array[2],array[3],array[4])
     }
     @TypeConverter
     fun toString(value: SCPPageDetails?):String? {
         if (value == null) return null
-        val string = "${value.Page_ID},${value.Category_ID},${value.Page_Name},${value.Lang}"
+        val string = "${value.Page_ID},${value.Category_ID},${value.Page_Name},${value.Lang},${value.Domain}"
         return string
     }
 }

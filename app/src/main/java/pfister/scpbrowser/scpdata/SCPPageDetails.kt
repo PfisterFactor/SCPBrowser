@@ -5,7 +5,8 @@ class SCPPageDetails(
         val Page_ID:Int,
         val Category_ID:Int,
         val Page_Name:String,
-        val Lang:String
+        val Lang:String,
+        val Domain:String
 ) {
     companion object {
         val REGEX:Regex = """WIKIREQUEST\.info\.(\w*)\s?=\s?[",']?((?:[^;,",'])*)[",']?""".toRegex()
@@ -13,7 +14,8 @@ class SCPPageDetails(
                 "pageId",
                 "categoryId",
                 "requestPageName",
-                "lang"
+                "lang",
+                "domain"
         )
 
         // Scrapes a SCP webpage for a WIKIREQUEST object
@@ -32,7 +34,7 @@ class SCPPageDetails(
 
             if (page_id == null || category_id == null) return null
 
-            return SCPPageDetails(page_id,category_id,map["requestPageName"]!!,map["lang"]!!)
+            return SCPPageDetails(page_id,category_id,map["requestPageName"]!!,map["lang"]!!,map["domain"]!!)
         }
     }
 }

@@ -103,6 +103,8 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
         val details = getPageDetails(OkHTTP!!,url) ?: return null
 
+        if (details.Domain != "www.scp-wiki.net") return null
+
         val page_source_request = requestSource(details.Page_ID)
 
         val page_source_response = OkHTTP?.newCall(page_source_request)?.execute()!!
