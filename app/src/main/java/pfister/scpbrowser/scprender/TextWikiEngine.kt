@@ -1,9 +1,6 @@
 package pfister.scpbrowser.scprender
 
-import pfister.scpbrowser.scprender.renderrules.RuleDiv
-import pfister.scpbrowser.scprender.renderrules.RuleImage
-import pfister.scpbrowser.scprender.renderrules.RuleStrong
-import pfister.scpbrowser.scprender.renderrules.RuleURL
+import pfister.scpbrowser.scprender.renderrules.*
 
 // The text engine used to convert the SCP source input to an HTML output
 class TextWikiEngine {
@@ -97,6 +94,7 @@ class TextWikiEngine {
     var source = ""
 
     private val render_rules = mapOf<String,RenderRule>(
+            "Comment" to RuleComment(this),
             "Div" to RuleDiv(this),
             "Image" to RuleImage(this),
             "Url" to RuleURL(this),
@@ -174,7 +172,7 @@ class TextWikiEngine {
         return output.toString()
     }
 
-    fun addToken(rule:String, options:Map<String,Any>, id_only:Boolean = false): String {
+    fun addToken(rule:String, options:Map<String,Any>?, id_only:Boolean = false): String {
         val newToken = TextToken(rule,options)
         tokens += newToken
         nextTokenID++
