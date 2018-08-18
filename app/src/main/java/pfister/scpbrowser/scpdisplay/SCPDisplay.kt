@@ -19,7 +19,7 @@ import pfister.scpbrowser.scprender.TextWikiEngine
 
 class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     companion object {
-        const val HOME_PAGE:String = "http://www.scp-wiki.net"
+        const val HOME_PAGE:String = "http://www.scp-wiki.net/"
         const val HOME_PAGE_ID:Int = 1946911
         const val INVALID_PAGE:String = "invalid_page"
         const val INVALID_PAGE_ID: Int = -1
