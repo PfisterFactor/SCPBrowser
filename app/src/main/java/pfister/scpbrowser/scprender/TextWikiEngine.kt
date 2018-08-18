@@ -1,5 +1,6 @@
 package pfister.scpbrowser.scprender
 
+import pfister.scpbrowser.scprender.parserules.*
 import pfister.scpbrowser.scprender.renderrules.*
 
 // The text engine used to convert the SCP source input to an HTML output
@@ -85,20 +86,32 @@ class TextWikiEngine {
     )
 
 
-    val delim = 0xff.toChar()
+    val DELIM = 0xff.toChar()
     val local_files_base_url = "http://scp-wiki.wdfiles.com/local--files/main/"
+
+    // Custom configuration for the parsing stage
+    val parse_config: Map<String, Any> = mapOf()
+
+    // Custom configuration for the render stage
+    val render_config: Map<String,Any> = mapOf()
 
     private var nextTokenID:Int = 0
     private var tokens: List<TextToken> = listOf()
 
     var source = ""
-
+    private val parse_rule: Array<ParseRule> = arrayOf(
+            ParseComment(this),
+            ParseDiv(this),
+            ParseImage(this),
+            ParseURL(this),
+            ParseStrong(this)
+    )
     private val render_rules = mapOf<String,RenderRule>(
-            "Comment" to RuleComment(this),
-            "Div" to RuleDiv(this),
-            "Image" to RuleImage(this),
-            "Url" to RuleURL(this),
-            "Strong" to RuleStrong(this)
+            "Comment" to RenderEmpty(this),
+            "Div" to RenderDiv(this),
+            "Image" to RenderImage(this),
+            "Url" to RenderURL(this),
+            "Strong" to RenderStrong(this)
     )
 
     fun transform(text:String): String {
@@ -116,9 +129,7 @@ class TextWikiEngine {
     }
 
     private fun parse() {
-        for (rule in render_rules.values) {
-            rule.parse()
-        }
+        parse_rule.forEach { it.parse() }
     }
 
     // Unsure if needed or not yet
@@ -145,7 +156,7 @@ class TextWikiEngine {
             // If we're already inside a deliminator
             if (in_delim) {
                 // Check if the current character is the ending to the token id
-                if (char == delim) {
+                if (char == DELIM) {
 
                     val int_key = token_id_string.toString().toInt()
                     val token = tokens[int_key]
@@ -160,7 +171,7 @@ class TextWikiEngine {
             }
             else {
                 // If we're starting a token ID
-                if (char == delim) {
+                if (char == DELIM) {
                     token_id_string.delete(0,token_id_string.capacity())
                     in_delim = true
                 }
@@ -181,7 +192,7 @@ class TextWikiEngine {
             "${nextTokenID-1}"
         }
         else {
-            "$delim${nextTokenID-1}$delim"
+            "$DELIM${nextTokenID-1}$DELIM"
         }
     }
 

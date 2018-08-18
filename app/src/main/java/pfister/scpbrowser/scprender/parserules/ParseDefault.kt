@@ -1,10 +1,8 @@
-package pfister.scpbrowser.scprender.renderrules
+package pfister.scpbrowser.scprender.parserules
 
-import pfister.scpbrowser.scprender.RenderRule
-import pfister.scpbrowser.scprender.TextToken
-import pfister.scpbrowser.scprender.TextWikiEngine
+import pfister.scpbrowser.scprender.ParseRule
 
-abstract class RuleDefault : RenderRule {
+abstract class ParseDefault : ParseRule {
 
     override fun parse() {
         regexReplace(regex) {x -> process(x)}
@@ -14,8 +12,6 @@ abstract class RuleDefault : RenderRule {
         return match.groupValues[0]
     }
 
-    override fun render(token: TextToken): String =
-        ""
 
 
     fun getAttrs(text:String): Map<String,String> {
@@ -44,5 +40,6 @@ abstract class RuleDefault : RenderRule {
     fun regexReplace(reg: Regex,callback: (MatchResult) -> CharSequence) {
         text_engine.source = reg.replace(text_engine.source) { x -> callback(x) }
     }
+
 
 }

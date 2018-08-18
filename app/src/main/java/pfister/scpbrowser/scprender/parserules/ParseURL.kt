@@ -1,36 +1,34 @@
-package pfister.scpbrowser.scprender.renderrules
+package pfister.scpbrowser.scprender.parserules
 
-import android.net.Uri
-import android.text.TextUtils
-import pfister.scpbrowser.scprender.TextToken
+import pfister.scpbrowser.scprender.Config
 import pfister.scpbrowser.scprender.TextWikiEngine
 
-class RuleURL(override val text_engine:TextWikiEngine) : RuleDefault() {
+class ParseURL(override val text_engine:TextWikiEngine) : ParseDefault() {
+    override val conf: Config? = Config.mapOf(
+        "schemes" to arrayOf(
+                "http://",
+                "https://",
+                "ftp://",
+                "gopher://",
+                "news://",
+                "mailto:",
+                "mms://"
+        )
+    )
+
     override val regex: Regex
     override val rule_name: String = "Url"
-
-    private val image_ext = arrayOf("jpg","jpeg","gif","png")
-
-    private val schemas = arrayOf(
-            "http://",
-            "https://",
-            "ftp://",
-            "gopher://",
-            "news://",
-            "mailto:",
-            "mms://"
-    )
 
     private var footnote_count: Int = 0
 
     init {
-        val quotedSchemas = schemas.map { x -> Regex.escape(x) }
+        val quotedSchemas = (conf!!.get_array_string("schemes")!!).map { x -> Regex.escape(x) }
         val regexstr = quotedSchemas.joinToString("|")
         regex = ("($regexstr)" +
                 "(" +
-                "[^ \\/\"\'${text_engine.delim}]*\\/" +
+                "[^ \\/\"\'${text_engine.DELIM}]*\\/" +
                 ")*" +
-                "[^ \\t\\n\\/\"\'${text_engine.delim}]*" +
+                "[^ \\t\\n\\/\"\'${text_engine.DELIM}]*" +
                 "[A-Za-z0-9\\/?=&~_#]").toRegex()
 
     }
@@ -78,49 +76,5 @@ class RuleURL(override val text_engine:TextWikiEngine) : RuleDefault() {
         return text_engine.addToken(rule_name,options)
     }
 
-    override fun render(token: TextToken): String {
-        val type = token.getString("type")!!
-        var href = token.getString("href")!!
-        var text = token.getString("text")!!
-
-        val pos = href.lastIndexOf('.')
-        val ext = href.substring(pos+1)
-
-
-
-        href = TextUtils.htmlEncode(href)
-
-        var start = ""
-        var end = ""
-
-        // If its an image link
-        if (image_ext.any { image_ext -> ext.contains(image_ext) }) {
-            if (text == "") {
-                text = Uri.parse(href).lastPathSegment
-                text = TextUtils.htmlEncode(text)
-            }
-            start = "<img src=\"$href\" alt=\"$text\" title=\"$text\" /><!-- "
-            end = " -->"
-        }
-        else {
-            text = TextUtils.htmlEncode(text)
-            start = "<a href=\"$href\""
-        }
-
-        start += ">"
-        end += "</a>"
-
-        if (type == "footnote") {
-            start = "<sup>$start"
-            end = "$end</sup>"
-        }
-
-        return "$start$text$end"
-
-
-
-
-
-    }
 
 }
