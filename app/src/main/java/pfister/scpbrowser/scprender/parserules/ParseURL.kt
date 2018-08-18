@@ -34,7 +34,7 @@ class ParseURL(override val text_engine:TextWikiEngine) : ParseDefault() {
     }
     override fun parse() {
         // Described-reference (named) URLs
-        val descr_regex = """\[($regex) ([^\]]+)\]""".toRegex()
+        val descr_regex = """\[*($regex) \|?([^\],]+)\]*""".toRegex()
         regexReplace(descr_regex) {x -> processDescr(x)}
 
         // Footnotes
