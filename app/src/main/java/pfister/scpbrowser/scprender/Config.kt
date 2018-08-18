@@ -1,9 +1,15 @@
 package pfister.scpbrowser.scprender
 
 class Config(initialCapacity:Int,loadFactor:Float = 0.75f) : HashMap<String,Any>(initialCapacity,loadFactor){
+
+
     companion object {
+        val EMPTY:Config by lazy {
+            Config(0)
+        }
+
         fun mapOf(vararg pairs:Pair<String,Any>):Config =
-            if (pairs.isNotEmpty()) pairs.toMap(Config(pairs.size)) else Config(0)
+            if (pairs.isNotEmpty()) pairs.toMap(Config(pairs.size)) else EMPTY
 
     }
     fun get_string(key:String):String? {
