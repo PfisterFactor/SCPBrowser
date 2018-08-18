@@ -114,7 +114,14 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
         val page = SCPPage()
         val json = JSONObject(page_source_response.body()?.string()!!)
-        val decoded = Html.fromHtml(json.getString("body")).toString()
+        var decoded = Html.fromHtml(json.getString("body")).toString()
+
+        val drop_str = "Page source"
+        if (decoded.startsWith(drop_str)) {
+            decoded = decoded.drop(drop_str.length)
+            decoded = decoded.trimStart()
+        }
+
         page.Page_Source = decoded
         page.Page_Details = details
         page.Page_ID = details.Page_ID
