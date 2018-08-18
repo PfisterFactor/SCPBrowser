@@ -16,8 +16,9 @@ class RenderImage(override val text_engine: TextWikiEngine) : RenderRule {
     )
 
     override fun render(token: TextToken): String {
-        var src = token.getString("src")!!
-        val attr = token.getMap("attr")!!.toMutableMap()
+        if (token.options == null) return ""
+        var src = token.options.get_string("src")!!
+        val attr = token.options.get_map_string("attr")!!.toMutableMap()
 
         // Is the src pointing to an local file?
         if (!src.contains("://")) {
@@ -60,7 +61,7 @@ class RenderImage(override val text_engine: TextWikiEngine) : RenderRule {
             output += """${TextUtils.htmlEncode(key)}="${TextUtils.htmlEncode(value)}""""
         }
         if (!alt) {
-            val alt_url = TextUtils.htmlEncode(Uri.parse(token.getString("src")!!).lastPathSegment)
+            val alt_url = TextUtils.htmlEncode(Uri.parse(token.options.get_string("src")!!).lastPathSegment)
             output += """ alt="$alt_url""""
         }
 

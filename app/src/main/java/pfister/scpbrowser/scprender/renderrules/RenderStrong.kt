@@ -11,7 +11,7 @@ class RenderStrong(override val text_engine: TextWikiEngine) : RenderRule {
     )
 
     override fun render(token: TextToken): String {
-        return when (token.getString("type")) {
+        return when (token.options?.get_string("type")) {
             "start" -> {
                 val css = " class=${conf!!.get_string("css")}"
                 if (conf.containsKey("css")) "<strong$css>" else "<strong>"

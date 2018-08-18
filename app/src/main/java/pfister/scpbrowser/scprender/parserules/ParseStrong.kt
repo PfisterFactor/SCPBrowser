@@ -9,8 +9,8 @@ class ParseStrong(override val text_engine: TextWikiEngine) : ParseDefault() {
     override val conf: Config? = null
 
     override fun process( match: MatchResult): CharSequence {
-        val start = text_engine.addToken(rule_name, mapOf("type" to "start"))
-        val end = text_engine.addToken(rule_name, mapOf("type" to "end"))
+        val start = text_engine.addToken(rule_name, Config.mapOf("type" to "start"))
+        val end = text_engine.addToken(rule_name, Config.mapOf("type" to "end"))
 
         val text = match.groupValues[1]
         return "$start$text$end"

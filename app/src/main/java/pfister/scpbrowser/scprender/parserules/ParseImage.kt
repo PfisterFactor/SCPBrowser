@@ -17,23 +17,22 @@ class ParseImage(override val text_engine: TextWikiEngine) : ParseDefault() {
     override fun process(match: MatchResult): CharSequence {
         val pos = match.groupValues[2].indexOf(' ')
 
-        val options: Map<String,Any>
+        val options: Config
         if (pos == -1) {
-            options = mapOf(
+            options = Config.mapOf(
                     "src" to match.groupValues[2],
                     "attr" to mapOf<String,String>()
             )
         }
         else {
-            options = mapOf(
+            options = Config.mapOf(
                     "src" to match.groupValues[2].substring(0,pos),
                     "attr" to getAttrs(match.groupValues[2].substring(pos+1))
             )
 
             // If there is a valid link attribute present then don't handle this match
             if ((options["attr"]!! as Map<*, *>).containsKey("link")) {
-                @Suppress("UNCHECKED_CAST")
-                val link:String = (options["attr"] as Map<String,String>)["link"]!!
+                val link:String = options.get_map_string("attr")!!["link"]!!
 
                 if (link.contains("://")) {
                     if (!url_regex.matches("link"))

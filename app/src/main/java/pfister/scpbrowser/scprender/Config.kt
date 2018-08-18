@@ -2,7 +2,6 @@ package pfister.scpbrowser.scprender
 
 class Config(initialCapacity:Int,loadFactor:Float = 0.75f) : HashMap<String,Any>(initialCapacity,loadFactor){
 
-
     companion object {
         val EMPTY:Config by lazy {
             Config(0)
@@ -10,27 +9,22 @@ class Config(initialCapacity:Int,loadFactor:Float = 0.75f) : HashMap<String,Any>
 
         fun mapOf(vararg pairs:Pair<String,Any>):Config =
             if (pairs.isNotEmpty()) pairs.toMap(Config(pairs.size)) else EMPTY
+    }
 
-    }
-    fun get_string(key:String):String? {
-        return this[key] as? String
-    }
-    fun get_bool(key:String):Boolean? {
-        return this[key] as? Boolean
-    }
-    fun get_int(key:String):Int? {
-        return this[key] as? Int
-    }
-    fun get_array(key:String):Array<Any>? {
-        return this[key] as? Array<Any>
-    }
-    fun get_array_string(key:String):Array<String>? {
-        return get_array(key) as? Array<String>
-    }
-    fun get_map(key:String):Map<String,Any>? {
-        return this[key] as? Map<String, Any>
-    }
-    fun get_map_string(key:String):Map<String,String>? {
-        return get_map(key) as? Map<String,String>
-    }
+    fun <T> get_class(key:String):T? = this[key] as? T
+
+    fun get_string(key:String):String? = get_class<String>(key)
+
+    fun get_bool(key:String):Boolean? = get_class<Boolean>(key)
+
+    fun get_int(key:String):Int? = get_class<Int>(key)
+
+    fun get_array(key:String):Array<Any>? = get_class<Array<Any>>(key)
+
+    fun get_array_string(key:String):Array<String>? = get_class<Array<String>>(key)
+
+    fun get_map(key:String):Map<String,Any>? = get_class<Map<String,Any>>(key)
+
+    fun get_map_string(key:String):Map<String,String>? = get_class<Map<String,String>>(key)
+
 }

@@ -19,9 +19,9 @@ class RenderURL(override val text_engine: TextWikiEngine) : RenderRule {
     )
 
     override fun render(token: TextToken): String {
-        val type = token.getString("type")!!
-        var href = token.getString("href")!!
-        var text = token.getString("text")!!
+        val type = token.options?.get_string("type")!!
+        var href = token.options.get_string("href")!!
+        var text = token.options.get_string("text")!!
 
         val pos = href.lastIndexOf('.')
         val ext = href.substring(pos+1)

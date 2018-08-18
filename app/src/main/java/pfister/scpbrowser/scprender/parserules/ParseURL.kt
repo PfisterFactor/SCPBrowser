@@ -48,7 +48,7 @@ class ParseURL(override val text_engine:TextWikiEngine) : ParseDefault() {
     }
 
     override fun process(match: MatchResult): CharSequence {
-        val options = mutableMapOf(
+        val options = Config.mapOf(
                 "type" to "inline",
                 "href" to match.groupValues[2],
                 "text" to match.groupValues[2]
@@ -57,7 +57,7 @@ class ParseURL(override val text_engine:TextWikiEngine) : ParseDefault() {
     }
 
     private fun processDescr(match:MatchResult):CharSequence {
-        val options = mutableMapOf(
+        val options = Config.mapOf(
                 "type" to "descr",
                 "href" to match.groupValues[1],
                 "text" to match.groupValues[4]
@@ -68,7 +68,7 @@ class ParseURL(override val text_engine:TextWikiEngine) : ParseDefault() {
 
     private fun processFootnote(match:MatchResult):CharSequence {
         footnote_count++
-        val options = mutableMapOf(
+        val options = Config.mapOf(
                 "type" to "footnote",
                 "href" to match.groupValues[1],
                 "text" to footnote_count

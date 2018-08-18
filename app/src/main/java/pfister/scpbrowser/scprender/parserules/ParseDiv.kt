@@ -20,14 +20,14 @@ class ParseDiv(override val text_engine: TextWikiEngine) : ParseDefault() {
 
         val text = match.groupValues[2]
 
-        val token_start = text_engine.addToken(rule_name, mapOf("type" to "start_div_start"))
+        val token_start = text_engine.addToken(rule_name, Config.mapOf("type" to "start_div_start"))
 
-        val token_end = text_engine.addToken(rule_name, mapOf("type" to "start_div_end"))
+        val token_end = text_engine.addToken(rule_name, Config.mapOf("type" to "start_div_end"))
 
         return "$token_start$text$token_end"
     }
 
-    private fun process_end_div(): CharSequence = text_engine.addToken(rule_name, mapOf("type" to "end_div"))
+    private fun process_end_div(): CharSequence = text_engine.addToken(rule_name, Config.mapOf("type" to "end_div"))
 
 
 
