@@ -130,7 +130,7 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
             val page = downloadAndPrepareSCP(url)
             if (page?.Page_ID == CurrentPage()?.Page_ID) return@doAsync
             if (page != null) {
-                val parsed = TextEngine.transform(page.Page_Source)
+                val parsed = TextEngine.transform(page)
                 uiThread {
 
                     this@SCPDisplay.loadDataWithBaseURL("file:///android_asset/", parsed, "text/html", "UTF-8",null)
