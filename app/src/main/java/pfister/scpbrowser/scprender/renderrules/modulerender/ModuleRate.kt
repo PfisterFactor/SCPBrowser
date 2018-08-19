@@ -62,6 +62,6 @@ class ModuleRate : ModuleRender {
 
     override fun render(attr: Map<String, String>, body: String): String {
         val rating = "todo" // Todo: Implement rating
-        return "<style>\n" + RATE_CSS + "\n</style>\n" + RATE_HTML.replace("%rating",rating)
+        return "<style>" + RATE_CSS + "</style>" + RATE_HTML.replace("%rating",rating)
     }
 }
