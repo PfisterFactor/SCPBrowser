@@ -5,15 +5,15 @@ import pfister.scpbrowser.scprender.RenderRule
 import pfister.scpbrowser.scprender.TextToken
 import pfister.scpbrowser.scprender.TextWikiEngine
 import pfister.scpbrowser.scprender.renderrules.modulerender.ModuleCSS
+import pfister.scpbrowser.scprender.renderrules.modulerender.ModuleRate
 import pfister.scpbrowser.scprender.renderrules.modulerender.ModuleRender
 
 class RenderModule(override val text_engine: TextWikiEngine) : RenderRule {
-    override val conf: Config? = Config.mapOf(
-            "module_delim" to 0xfe.toChar()
-    )
+    override val conf: Config? = null
 
     val modules:Array<ModuleRender> = arrayOf(
-            ModuleCSS()
+            ModuleCSS(),
+            ModuleRate()
     )
 
     override fun render(token: TextToken): String {
@@ -21,7 +21,7 @@ class RenderModule(override val text_engine: TextWikiEngine) : RenderRule {
         val attr = token.options.get_string("attr").orEmpty()
         val body = token.options.get_string("body").orEmpty()
 
-        val module = modules.find { it.module_name == moduleName } ?: return ""
+        val module = modules.find { it.module_name.toLowerCase() == moduleName.toLowerCase() } ?: return ""
 
         // Split up the attributes into key, value pairs and throw them in a map
         val attr_array:Map<String,String> = if (attr.isNotEmpty())

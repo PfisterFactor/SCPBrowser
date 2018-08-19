@@ -145,7 +145,7 @@ class TextWikiEngine {
                 |<script type="text/javascript" src="scp.js"></script>
                 |
             """.trimMargin()
-        return "$STYLESHEET$JAVASCRIPT<body onload=\"onLoad()\">$html</body>"
+        return "$STYLESHEET$JAVASCRIPT<body onload=\"onLoad()\">\n$html\n</body>"
     }
     private fun parse() {
         parse_rule.forEach { it.parse() }
