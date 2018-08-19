@@ -102,6 +102,7 @@ class TextWikiEngine {
 
     var source = ""
     private val parse_rule: Array<ParseRule> = arrayOf(
+            ParseDelimiter(this),
             ParseModule(this),
             ParseComment(this),
             ParseBreak(this),
@@ -112,7 +113,8 @@ class TextWikiEngine {
             ParseWikilink(this),
             ParseStrong(this)
     )
-    private val render_rules = mapOf<String,RenderRule>(
+    private val render_rules = mapOf(
+            "Delimiter" to RenderDelimiter(this),
             "Module" to RenderModule(this),
             "Comment" to RenderEmpty(this),
             "Break" to RenderBreak(this),
