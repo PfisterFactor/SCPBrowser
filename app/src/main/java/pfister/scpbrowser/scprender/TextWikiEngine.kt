@@ -8,7 +8,9 @@ class TextToken(val rule_name:String, val options:Config?)
 
 // The text engine used to convert the SCP source input to an HTML output
 class TextWikiEngine {
-
+    companion object {
+        const val DELIM: Char = 0xff.toChar()
+    }
     // The default list of rules, in order, to apply to the source text
     private val rules = arrayOf(
             "Include",
@@ -89,7 +91,7 @@ class TextWikiEngine {
     )
 
 
-    val DELIM = 0xff.toChar()
+
     val local_files_base_url = "http://scp-wiki.wdfiles.com/local--files/"
 
     // Custom configuration for the parsing stage
@@ -113,6 +115,7 @@ class TextWikiEngine {
             ParseDiv(this),
             ParseImage(this),
             ParseCenter(this),
+            ParseParagraph(this),
             ParseURL(this),
             ParseWikilink(this),
             ParseStrong(this)
@@ -127,6 +130,7 @@ class TextWikiEngine {
             "Div" to RenderDiv(this),
             "Image" to RenderImage(this),
             "Center" to RenderCenter(this),
+            "Paragraph" to RenderParagraph(this),
             "Url" to RenderURL(this),
             "Wikilink" to RenderWikilink(this),
             "Strong" to RenderStrong(this)
@@ -230,6 +234,8 @@ class TextWikiEngine {
             "$DELIM${nextTokenID-1}$DELIM"
         }
     }
+
+    fun getToken(id:Int):TextToken? = tokens[id]
 
 
 

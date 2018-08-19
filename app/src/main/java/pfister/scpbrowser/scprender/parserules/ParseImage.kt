@@ -6,8 +6,8 @@ import pfister.scpbrowser.scprender.TextWikiEngine
 class ParseImage(override val text_engine: TextWikiEngine) : ParseDefault() {
     override val conf: Config? = Config.mapOf(
             "schemes" to "http|https|ftp|gopher|news",
-            "host_regex" to """(?:[^.\s"\'<\\\${text_engine.DELIM}\ca-\cz]+\.)*[a-z](?:[-a-z0-9]*[a-z0-9])?\.?""",
-            "path_regex" to """(?:[^\s"<\\\${text_engine.DELIM}\ca-\cz]*)?"""
+            "host_regex" to """(?:[^.\s"\'<\\\${TextWikiEngine.DELIM}\ca-\cz]+\.)*[a-z](?:[-a-z0-9]*[a-z0-9])?\.?""",
+            "path_regex" to """(?:[^\s"<\\\${TextWikiEngine.DELIM}\ca-\cz]*)?"""
     )
     override val regex: Regex = """(\[\[image\s+)(.+?)(\]\])""".toRegex(RegexOption.IGNORE_CASE)
     override val rule_name: String = "Image"

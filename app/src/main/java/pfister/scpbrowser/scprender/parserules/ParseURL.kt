@@ -26,9 +26,9 @@ class ParseURL(override val text_engine:TextWikiEngine) : ParseDefault() {
         val regexstr = quotedSchemas.joinToString("|")
         regex = ("($regexstr)" +
                 "(" +
-                "[^ \\/\"\'${text_engine.DELIM}]*\\/" +
+                "[^ \\/\"\'${TextWikiEngine.DELIM}]*\\/" +
                 ")*" +
-                "[^ \\t\\n\\/\"\'${text_engine.DELIM}]*" +
+                "[^ \\t\\n\\/\"\'${TextWikiEngine.DELIM}]*" +
                 "[A-Za-z0-9\\/?=&~_#]").toRegex()
 
     }
