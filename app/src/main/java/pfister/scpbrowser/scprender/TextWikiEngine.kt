@@ -105,6 +105,7 @@ class TextWikiEngine {
 
     var page: SCPPage? = null
     var source = ""
+
     private val parse_rule: Array<ParseRule> = arrayOf(
             ParseDelimiter(this),
             ParseModule(this),
@@ -166,8 +167,11 @@ class TextWikiEngine {
             """.trimMargin()
         return "$STYLESHEET$JAVASCRIPT<body onload=\"onLoad()\">\n$html\n</body>"
     }
-    private fun parse() {
-        parse_rule.forEach { it.parse() }
+
+
+    private fun parse() = parse_rule.forEach {
+        (it as? Transformer)?.transform()
+        it.parse()
     }
 
     // Unsure if needed or not yet
