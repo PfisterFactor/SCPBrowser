@@ -1,5 +1,6 @@
 package pfister.scpbrowser.scprender
 
+import pfister.scpbrowser.scpdata.SCPPage
 import pfister.scpbrowser.scprender.parserules.*
 import pfister.scpbrowser.scprender.renderrules.*
 
@@ -89,7 +90,7 @@ class TextWikiEngine {
 
 
     val DELIM = 0xff.toChar()
-    val local_files_base_url = "http://scp-wiki.wdfiles.com/local--files/main/"
+    val local_files_base_url = "http://scp-wiki.wdfiles.com/local--files/"
 
     // Custom configuration for the parsing stage
     val parse_config: Map<String, Any> = mapOf()
@@ -100,11 +101,13 @@ class TextWikiEngine {
     private var nextTokenID:Int = 0
     private var tokens: List<TextToken> = listOf()
 
+    var page: SCPPage? = null
     var source = ""
     private val parse_rule: Array<ParseRule> = arrayOf(
             ParseDelimiter(this),
             ParseModule(this),
             ParseComment(this),
+            ParseHoriz(this),
             ParseBreak(this),
             ParseDiv(this),
             ParseImage(this),
@@ -117,6 +120,7 @@ class TextWikiEngine {
             "Delimiter" to RenderDelimiter(this),
             "Module" to RenderModule(this),
             "Comment" to RenderEmpty(this),
+            "Horiz" to RenderHoriz(this),
             "Break" to RenderBreak(this),
             "Div" to RenderDiv(this),
             "Image" to RenderImage(this),
@@ -126,9 +130,12 @@ class TextWikiEngine {
             "Strong" to RenderStrong(this)
     )
 
-    fun transform(text:String): String {
+    fun transform(page:SCPPage): String {
+
+        // Set the page
+        this.page = page
         // Set the source text
-        source = "" + text
+        source = "" + page.Page_Source
 
         // Clear the tokens
         tokens = listOf()

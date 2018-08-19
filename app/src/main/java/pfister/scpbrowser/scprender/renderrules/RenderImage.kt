@@ -22,7 +22,12 @@ class RenderImage(override val text_engine: TextWikiEngine) : RenderRule {
 
         // Is the src pointing to an local file?
         if (!src.contains("://")) {
-            src = "${conf?.get_string("base").orEmpty()}$src"
+            val base_url = conf?.get_string("base")
+            if (base_url != null) {
+                val page_name = TextUtils.htmlEncode(text_engine.page!!.Page_Details!!.Page_Name)
+                src = "$base_url$page_name/$src"
+            }
+
         }
         //
 
