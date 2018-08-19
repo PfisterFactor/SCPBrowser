@@ -5,9 +5,12 @@ import pfister.scpbrowser.scprender.TextWikiEngine
 
 class ParseParagraph(override val text_engine: TextWikiEngine) : ParseDefault() {
     override val rule_name: String = "Paragraph"
-    override val regex: Regex = """^.*?\n\n""".toRegex(RegexOption.MULTILINE)
+    override val regex: Regex = """^.*?\n\n""".toRegex(setOf(RegexOption.MULTILINE,RegexOption.DOT_MATCHES_ALL))
     override val conf: Config? = Config.mapOf(
             "skip" to arrayOf(
+                    "module",
+                    "div",
+                    "comment",
                     "blockquote",
                     "code",
                     "heading",
@@ -22,7 +25,7 @@ class ParseParagraph(override val text_engine: TextWikiEngine) : ParseDefault() 
     override fun process(match: MatchResult): CharSequence {
         val skip = conf?.get_array_string("skip")
 
-        if (match.groupValues[0].trim().isEmpty())
+        if (match.groupValues[0].replace("\\s*".toRegex(),"").isEmpty())
             return ""
 
         val delimiter_regex = """(?:${TextWikiEngine.DELIM})(\d+?)(?:${TextWikiEngine.DELIM})""".toRegex()
