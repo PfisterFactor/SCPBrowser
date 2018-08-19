@@ -106,6 +106,7 @@ class TextWikiEngine {
             ParseComment(this),
             ParseDiv(this),
             ParseImage(this),
+            ParseCenter(this),
             ParseURL(this),
             ParseWikilink(this),
             ParseStrong(this)
@@ -115,6 +116,7 @@ class TextWikiEngine {
             "Comment" to RenderEmpty(this),
             "Div" to RenderDiv(this),
             "Image" to RenderImage(this),
+            "Center" to RenderCenter(this),
             "Url" to RenderURL(this),
             "Wikilink" to RenderWikilink(this),
             "Strong" to RenderStrong(this)
