@@ -104,6 +104,7 @@ class TextWikiEngine {
     private val parse_rule: Array<ParseRule> = arrayOf(
             ParseModule(this),
             ParseComment(this),
+            ParseBreak(this),
             ParseDiv(this),
             ParseImage(this),
             ParseCenter(this),
@@ -114,6 +115,7 @@ class TextWikiEngine {
     private val render_rules = mapOf<String,RenderRule>(
             "Module" to RenderModule(this),
             "Comment" to RenderEmpty(this),
+            "Break" to RenderBreak(this),
             "Div" to RenderDiv(this),
             "Image" to RenderImage(this),
             "Center" to RenderCenter(this),
@@ -204,6 +206,7 @@ class TextWikiEngine {
         return output.toString()
     }
 
+    fun addToken(rule:String, id_only: Boolean = false): String = addToken(rule,null,id_only)
     fun addToken(rule:String, options:Config?, id_only:Boolean = false): String {
         val newToken = TextToken(rule,options)
         tokens += newToken
