@@ -15,6 +15,8 @@ class Config(initialCapacity:Int,loadFactor:Float = 0.75f) : HashMap<String,Any>
 
     fun get_string(key:String):String? = get_class<String>(key)
 
+    fun get_char(key:String):Char? = get_class<Char>(key)
+
     fun get_bool(key:String):Boolean? = get_class<Boolean>(key)
 
     fun get_int(key:String):Int? = get_class<Int>(key)

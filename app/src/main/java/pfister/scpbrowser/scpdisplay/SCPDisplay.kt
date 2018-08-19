@@ -71,19 +71,7 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
         History()?.popPage()
 
     }
-//    private fun injectLocalResources(scppage:SCPPage) {
-//        val STYLESHEET = """
-//            |<link href="scp-theme.old.css" type="text/css" rel="stylesheet">
-//            |
-//            """.trimMargin()
-//        val JAVASCRIPT = """
-//                |<script type="text/javascript" src="jquery.js"></script>
-//                |<script type="text/javascript" src="tooltip.js"></script>
-//                |<script type="text/javascript" src="scp.js"></script>
-//                |
-//            """.trimMargin()
-//        scppage.PageContent = STYLESHEET + JAVASCRIPT + "<body onload=\"onLoad()\">" + scppage.PageContent + "</body>"
-//    }
+
 //    private fun stripUnwantedElements(scppage: SCPPage) {
 //        val unwantedRatingBox = "<div class=\"page-rate-widget-box\">"
 //
@@ -120,7 +108,12 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
         if (decoded.startsWith(drop_str)) {
             decoded = decoded.drop(drop_str.length)
             decoded = decoded.trimStart()
+            decoded = decoded.trimStart('\n')
         }
+        // These characters are actually not the same
+        // One is U+00A0 : NO-BREAK SPACE [NBSP], the other is a regular space
+        // I don't know why the scp source does this, so we have to fix it
+        decoded = decoded.replace(' ',' ')
 
         page.Page_Source = decoded
         page.Page_Details = details

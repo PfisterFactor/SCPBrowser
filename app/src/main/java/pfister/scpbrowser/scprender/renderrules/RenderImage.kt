@@ -11,7 +11,7 @@ class RenderImage(override val text_engine: TextWikiEngine) : RenderRule {
     override val conf: Config? = Config.mapOf(
             "base" to text_engine.local_files_base_url,
             "url_base" to "",
-            "css" to "",
+            "css" to "image",
             "css_link" to ""
     )
 

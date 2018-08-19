@@ -102,6 +102,7 @@ class TextWikiEngine {
 
     var source = ""
     private val parse_rule: Array<ParseRule> = arrayOf(
+            ParseModule(this),
             ParseComment(this),
             ParseDiv(this),
             ParseImage(this),
@@ -110,6 +111,7 @@ class TextWikiEngine {
             ParseStrong(this)
     )
     private val render_rules = mapOf<String,RenderRule>(
+            "Module" to RenderModule(this),
             "Comment" to RenderEmpty(this),
             "Div" to RenderDiv(this),
             "Image" to RenderImage(this),
@@ -129,9 +131,22 @@ class TextWikiEngine {
         nextTokenID = 0
 
         parse()
-        return render()
+        return injectLocalResources(render())
     }
 
+    private fun injectLocalResources(html:String):String {
+        val STYLESHEET = """
+            |<link href="scp-theme.old.css" type="text/css" rel="stylesheet">
+            |
+            """.trimMargin()
+        val JAVASCRIPT = """
+                |<script type="text/javascript" src="jquery.js"></script>
+                |<script type="text/javascript" src="tooltip.js"></script>
+                |<script type="text/javascript" src="scp.js"></script>
+                |
+            """.trimMargin()
+        return "$STYLESHEET$JAVASCRIPT<body onload=\"onLoad()\">$html</body>"
+    }
     private fun parse() {
         parse_rule.forEach { it.parse() }
     }
