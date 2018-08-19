@@ -4,7 +4,7 @@ import pfister.scpbrowser.scprender.Config
 import pfister.scpbrowser.scprender.TextWikiEngine
 
 class ParseStrong(override val text_engine: TextWikiEngine) : ParseDefault() {
-    override val regex: Regex = """\*\*([^\s\n](?:.*[^\s\n])?)\*\*""".toRegex()
+    override val regex: Regex = """\*\*([^\s\n](?:.*?[^\s\n])?)\*\*""".toRegex()
     override val rule_name: String = "Strong"
     override val conf: Config? = null
 
