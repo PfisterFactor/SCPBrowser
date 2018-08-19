@@ -4,7 +4,7 @@ import pfister.scpbrowser.scprender.Config
 import pfister.scpbrowser.scprender.TextWikiEngine
 
 class ParseComment(override val text_engine: TextWikiEngine) : ParseDefault() {
-    override val regex: Regex = """\[!\-\-(?:[^]])*\-\-]""".toRegex()
+    override val regex: Regex = """\[!\-\-.+?\-\-]""".toRegex(RegexOption.DOT_MATCHES_ALL)
     override val rule_name: String = "Comment"
     override val conf: Config? = null
 
