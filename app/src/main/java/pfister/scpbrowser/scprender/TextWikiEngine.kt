@@ -114,6 +114,7 @@ class TextWikiEngine {
             ParseHoriz(this),
             ParseBreak(this),
             ParseDiv(this),
+            ParseAlign(this),
             ParseImage(this),
             ParseCenter(this),
             ParseParagraph(this),
