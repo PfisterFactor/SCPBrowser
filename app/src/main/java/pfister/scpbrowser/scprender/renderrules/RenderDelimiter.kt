@@ -9,6 +9,6 @@ class RenderDelimiter(override val text_engine: TextWikiEngine) : RenderRule {
     override val conf: Config? = null
 
     override fun render(token: TextToken): String {
-        return token.options!!.get_char("delim")?.toString().orEmpty()
+        return token.options?.get_char("delim")?.toString().orEmpty()
     }
 }
