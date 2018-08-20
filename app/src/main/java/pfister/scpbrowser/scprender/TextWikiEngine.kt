@@ -125,7 +125,6 @@ class TextWikiEngine {
     private val render_rules = mapOf(
             "Delimiter" to RenderDelimiter(this),
             "Module" to RenderModule(this),
-            "Comment" to RenderEmpty(this),
             "Heading" to RenderHeading(this),
             "Horiz" to RenderHoriz(this),
             "Break" to RenderBreak(this),
