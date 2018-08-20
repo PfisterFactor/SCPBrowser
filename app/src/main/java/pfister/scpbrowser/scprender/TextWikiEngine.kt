@@ -120,7 +120,8 @@ class TextWikiEngine {
             ParseParagraph(this),
             ParseURL(this),
             ParseWikilink(this),
-            ParseStrong(this)
+            ParseStrong(this),
+            ParseEmphasis(this)
     )
     private val render_rules = mapOf(
             "Delimiter" to RenderDelimiter(this),
@@ -134,7 +135,8 @@ class TextWikiEngine {
             "Paragraph" to RenderParagraph(this),
             "Url" to RenderURL(this),
             "Wikilink" to RenderWikilink(this),
-            "Strong" to RenderStrong(this)
+            "Strong" to RenderStrong(this),
+            "Emphasis" to RenderEmphasis(this)
     )
 
     fun transform(page:SCPPage): String {
