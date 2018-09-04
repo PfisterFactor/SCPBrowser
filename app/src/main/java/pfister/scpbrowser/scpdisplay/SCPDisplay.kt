@@ -6,7 +6,6 @@ import android.util.AttributeSet
 import android.webkit.WebSettings
 import android.webkit.WebView
 import okhttp3.MediaType
-import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.jetbrains.anko.doAsync
@@ -16,6 +15,9 @@ import pfister.scpbrowser.SCPApplication
 import pfister.scpbrowser.scpdata.SCPPage
 import pfister.scpbrowser.scpdata.SCPPageDetails
 import pfister.scpbrowser.scprender.TextWikiEngine
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URL
 
 class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     companion object {
@@ -36,21 +38,52 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
         }
         // Returns the details for a page
-        // Currently does it very inefficiently, scrapes the page for a WIKIREQUEST object and takes it from there
+        // Scrapes the webpage passed and tries to find a wikirequest object that has the page details assigned to it
+        // Then passes the relevant chunk of the webpage to a regex and turns it into a SCPPageDetails object
         // Is blocking
-        fun getPageDetails(okHttp: OkHttpClient, url:String): SCPPageDetails? {
+        // TODO: Implement caching
+        fun getPageDetails(url:String): SCPPageDetails? {
 
-            val request = Request.Builder()
-                    .url(url)
-                    .build()
+            val stream = URL(url).openStream()
+            val reader = BufferedReader(InputStreamReader(stream))
+            // 800 is a rough estimate of the wikirequest body on the source page
+            val wiki_request_buffer = StringBuilder(800)
 
-            val response = okHttp.newCall(request).execute()
-            if (!response.isSuccessful) return null
-            if (response.body() == null) return null
+            val START_STRING = "WIKIREQUEST"
+            var start_string_index = 0
 
-            val body = response.body()!!
+            val END_STRING = "</script>"
+            var end_string_index = 0
 
-            return SCPPageDetails.scrapePage(body.string())
+            var isReading = false
+
+            var read:Int = reader.read()
+            while (read != -1) {
+                val char = read.toChar()
+
+                if (isReading) {
+                    wiki_request_buffer.append(char)
+                    if (END_STRING[end_string_index].toLowerCase() == char.toLowerCase()) {
+                        if (end_string_index == END_STRING.length-1)
+                            break
+                        else
+                            end_string_index++
+                    }
+                }
+                else if (START_STRING[start_string_index].toLowerCase() == char.toLowerCase()) {
+                    if (start_string_index == START_STRING.length-1)
+                        isReading = true
+                    else
+                        start_string_index++
+                }
+                else
+                    start_string_index = 0
+
+
+                read = reader.read()
+            }
+            reader.close()
+            return SCPPageDetails.scrapePage(wiki_request_buffer.toString())
         }
     }
     constructor(context:Context):this(context,null) {
@@ -89,7 +122,7 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     private fun downloadAndPrepareSCP(url:String): SCPPage? {
 
 
-        val details = getPageDetails(OkHTTP!!,url) ?: return null
+        val details: SCPPageDetails = getPageDetails(url) ?: return null
 
         if (details.Domain != "www.scp-wiki.net") return null
 
@@ -100,10 +133,12 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 
         if (!page_source_response.isSuccessful) return null
 
+
         val page = SCPPage()
         val json = JSONObject(page_source_response.body()?.string()!!)
         var decoded = Html.fromHtml(json.getString("body")).toString()
 
+        // Drop "Page Source" from the top of the string
         val drop_str = "Page source"
         if (decoded.startsWith(drop_str)) {
             decoded = decoded.drop(drop_str.length)
@@ -119,6 +154,7 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
         page.Page_Details = details
         page.Page_ID = details.Page_ID
 
+        page_source_response.close()
         return page
 
     }
