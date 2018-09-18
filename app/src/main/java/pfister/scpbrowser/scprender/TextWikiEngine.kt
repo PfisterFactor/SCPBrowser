@@ -108,6 +108,7 @@ class TextWikiEngine {
 
     private val parse_rule: Array<ParseRule> = arrayOf(
             ParseDelimiter(this),
+            ParseRaw(this),
             ParseModule(this),
             ParseComment(this),
             ParseHeading(this),
@@ -125,6 +126,7 @@ class TextWikiEngine {
     )
     private val render_rules = mapOf(
             "Delimiter" to RenderDelimiter(this),
+            "Raw" to RenderRaw(this),
             "Module" to RenderModule(this),
             "Heading" to RenderHeading(this),
             "Horiz" to RenderHoriz(this),
