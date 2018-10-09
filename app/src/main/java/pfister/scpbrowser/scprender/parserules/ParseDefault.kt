@@ -2,12 +2,24 @@ package pfister.scpbrowser.scprender.parserules
 
 import pfister.scpbrowser.scprender.ParseRule
 
-class ParseResult(val value:String, val groupValues:Array<String>, val range:IntRange) {
-    companion object {
-        fun fromMatchResult(match: MatchResult): ParseResult = ParseResult(match.value,match.groupValues.toTypedArray(),match.range)
+class CustomMatch(override val value:String, override val range:IntRange, override val groups: MatchGroupCollection): MatchResult {
+    override fun next(): MatchResult? {
+        TODO("not implemented")
     }
+    override val groupValues: List<String> = groups.fold(emptyList()) {acc,v -> if (v != null) acc.plus(v.value) else acc }
 }
 
+
+
+class ListMatchGroupCollection(private val elements: List<MatchGroup?>) : MatchGroupCollection {
+    override val size: Int = elements.size
+    override fun iterator(): Iterator<MatchGroup?> = elements.iterator()
+    override fun isEmpty(): Boolean = elements.isEmpty()
+    override fun get(index: Int): MatchGroup? = elements[index]
+    override fun contains(element: MatchGroup?): Boolean = elements.contains(element)
+    override fun containsAll(elements: Collection<MatchGroup?>): Boolean = elements.containsAll(elements)
+
+}
 abstract class ParseDefault : ParseRule {
 
     override fun parse() {
@@ -47,7 +59,7 @@ abstract class ParseDefault : ParseRule {
     // start_reg is the regex to match to the beginning tag
     // end_rag is the regex to match to the end tag
     // group_reg matches on the tag for groups
-    fun recursiveMatch(text:String, start_reg:Regex, group_reg:Regex, end_reg:Regex):Array<ParseResult> {
+    fun recursiveMatch(text:String, start_reg:Regex, group_reg:Regex, end_reg:Regex):Array<MatchResult> {
 
         // If one range contains another
         fun containsRange(range:IntRange,inner_range:IntRange):Boolean =
@@ -83,16 +95,24 @@ abstract class ParseDefault : ParseRule {
 
         }
 
-        val returnList:MutableList<ParseResult> = mutableListOf()
+        val returnList:MutableList<CustomMatch> = mutableListOf()
 
         for ((start,end) in match_map) {
             // Construct a range for the result
             val range = IntRange(start.range.start,end.range.endInclusive)
             val value = text.substring(range)
             // Take the groupings from the grouping regex
-            val groupValues: Array<String> = group_reg.findAll(value).map { it.groupValues[0] }.toList().toTypedArray()
+            val groups: MatchGroupCollection? = ListMatchGroupCollection(listOf<MatchGroup?>(MatchGroup(value,range))
+                    .plus(group_reg.find(value)?.groups?.map {
+                        if (it != null)
+                            MatchGroup(it.value,IntRange(it.range.start + range.start,it.range.endInclusive+range.start-1))
+                        else null
+                    } ?: emptyList()))
 
-            returnList.add(ParseResult(value,groupValues,range))
+            if (groups != null)
+                returnList.add(CustomMatch(text,range,groups))
+            else
+                returnList.add(CustomMatch(text,range, ListMatchGroupCollection(emptyList())))
 
         }
 
