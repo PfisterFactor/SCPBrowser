@@ -25,6 +25,7 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
         const val HOME_PAGE_ID:Int = 1946911
         const val INVALID_PAGE:String = "invalid_page"
         const val INVALID_PAGE_ID: Int = -1
+        const val NO_BREAK_SPACE:Char = ' '
 
         fun requestSource(page_ID: Int): Request {
             val body: RequestBody = RequestBody.create(MediaType.parse("application/x-www-form-urlencoded"),"page_id=$page_ID&moduleName=viewsource%2FViewSourceModule")
@@ -148,7 +149,7 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
         // These characters are actually not the same
         // One is U+00A0 : NO-BREAK SPACE [NBSP], the other is a regular space
         // I don't know why the scp source does this, so we have to fix it
-        decoded = decoded.replace(' ',' ')
+        decoded = decoded.replace(NO_BREAK_SPACE,' ')
 
         page.Page_Source = decoded
         page.Page_Details = details
