@@ -3,8 +3,8 @@ package pfister.scpbrowser.scprender.parserules
 import pfister.scpbrowser.scprender.ParseRule
 
 class CustomMatch(override val value:String, override val range:IntRange, override val groups: MatchGroupCollection): MatchResult {
-    override fun next(): MatchResult? {
-        TODO("not implemented")
+    override fun next(): MatchResult?  {
+        throw NotImplementedError("Next called on CustomMatch!")
     }
     override val groupValues: List<String> = groups.fold(emptyList()) {acc,v -> if (v != null) acc.plus(v.value) else acc }
 }
@@ -101,18 +101,23 @@ abstract class ParseDefault : ParseRule {
             // Construct a range for the result
             val range = IntRange(start.range.start,end.range.endInclusive)
             val value = text.substring(range)
-            // Take the groupings from the grouping regex
-            val groups: MatchGroupCollection? = ListMatchGroupCollection(listOf<MatchGroup?>(MatchGroup(value,range))
-                    .plus(group_reg.find(value)?.groups?.map {
-                        if (it != null)
-                            MatchGroup(it.value,IntRange(it.range.start + range.start,it.range.endInclusive+range.start-1))
-                        else null
-                    } ?: emptyList()))
 
-            if (groups != null)
-                returnList.add(CustomMatch(text,range,groups))
-            else
-                returnList.add(CustomMatch(text,range, ListMatchGroupCollection(emptyList())))
+            // Take the groupings from the grouping regex
+            val groups_list:MutableList<MatchGroup> = mutableListOf()
+            groups_list.add(MatchGroup(value,range))
+
+            val group_reg_match = group_reg.find(value)
+            if (group_reg_match != null) {
+                // Skip first element
+                for (group in group_reg_match.groups.drop(1)) {
+                    if (group != null)
+                        groups_list.add(MatchGroup(group.value,IntRange(group.range.start + range.start,group.range.endInclusive+range.start-1)))
+                }
+
+            }
+
+            val groups = ListMatchGroupCollection(groups_list)
+            returnList.add(CustomMatch(text,range,groups))
 
         }
 
@@ -120,6 +125,13 @@ abstract class ParseDefault : ParseRule {
 
 
 
+    }
+
+    fun regexRecursiveReplace(start:Regex,end:Regex,grouping:Regex,callback: (MatchResult) -> CharSequence) {
+        val matches = recursiveMatch(text_engine.source,start,grouping,end)
+        matches.forEach {
+            text_engine.source.replaceRange(it.range,callback(it))
+        }
     }
 
     fun regexReplace(reg: Regex,callback: (MatchResult) -> CharSequence) {
