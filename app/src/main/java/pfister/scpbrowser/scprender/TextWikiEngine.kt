@@ -248,7 +248,7 @@ class TextWikiEngine {
         }
     }
 
-    fun getToken(id:Int):TextToken? = tokens[id]
+    fun getToken(id:Int):TextToken? = tokens.getOrNull(id)
 
 
 
