@@ -107,6 +107,7 @@ class TextWikiEngine {
     var source = ""
 
     private val parse_rule: Array<ParseRule> = arrayOf(
+            ParsePrefilter(this),
             ParseDelimiter(this),
             ParseRaw(this),
             ParseModule(this),
@@ -119,7 +120,7 @@ class TextWikiEngine {
             ParseAlign(this),
             ParseImage(this),
             ParseCenter(this),
-            //ParseNewline(this),
+            ParseNewline(this),
             ParseParagraph(this),
             ParseURL(this),
             ParseWikilink(this),

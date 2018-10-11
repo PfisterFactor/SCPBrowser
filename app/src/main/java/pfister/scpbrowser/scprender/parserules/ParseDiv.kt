@@ -7,11 +7,11 @@ import pfister.scpbrowser.scprender.Transformer
 class ParseDiv(override val text_engine: TextWikiEngine) : ParseDefault(), Transformer {
 
     override val rule_name: String = "Div"
-    override val regex: Regex = """(\[\[)(div\s.*?)(\]\])""".toRegex()
+    override val regex: Regex = """(\n)?\[\[div\s(.*?)?\]\] *\n""".toRegex(setOf(RegexOption.MULTILINE,RegexOption.DOT_MATCHES_ALL,RegexOption.IGNORE_CASE))
 
     override val conf: Config? = null
 
-    val div_end_regex = """\[\[\/div]]""".toRegex()
+    val div_end_regex = """\[\[\/div\]\] *""".toRegex(setOf(RegexOption.MULTILINE,RegexOption.DOT_MATCHES_ALL,RegexOption.IGNORE_CASE))
     val div_space_regex = """\[\[\/div\]\](?:\s{2,})?\[""".toRegex(setOf(RegexOption.IGNORE_CASE))
 
     // Remove spaces between divs
@@ -33,11 +33,10 @@ class ParseDiv(override val text_engine: TextWikiEngine) : ParseDefault(), Trans
 
         val token_end = text_engine.addToken(rule_name, Config.mapOf("type" to "start_div_end"))
 
-        return "$token_start$text$token_end"
-//        return match.groupValues[0]
+        return match.groupValues[1] + match.groupValues[1] + "$token_start$text$token_end" + "\n\n"
     }
 
-    private fun process_end_div(): CharSequence = text_engine.addToken(rule_name, Config.mapOf("type" to "end_div"))
+    private fun process_end_div(): CharSequence = "\n\n" + text_engine.addToken(rule_name, Config.mapOf("type" to "end_div"))
 
 
 

@@ -11,7 +11,7 @@ class RenderDiv(override val text_engine: TextWikiEngine) : RenderRule {
     override fun render(token: TextToken): String {
         return when (token.options?.get_string("type")) {
             "end_div" -> "</div>"
-            "start_div_start" -> "<"
+            "start_div_start" -> "<div "
             "start_div_end" -> ">"
             else -> ""
         }
