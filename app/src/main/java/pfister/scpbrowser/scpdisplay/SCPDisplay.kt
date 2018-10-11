@@ -3,9 +3,11 @@ package pfister.scpbrowser.scpdisplay
 import android.content.Context
 import android.text.Html
 import android.util.AttributeSet
+import android.util.Log
 import android.webkit.WebSettings
 import android.webkit.WebView
 import okhttp3.MediaType
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.jetbrains.anko.doAsync
@@ -18,6 +20,7 @@ import pfister.scpbrowser.scprender.TextWikiEngine
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.URL
+import kotlin.system.measureTimeMillis
 
 class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
     companion object {
@@ -93,6 +96,46 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
             reader.close()
             return SCPPageDetails.scrapePage(wiki_request_buffer.toString())
         }
+        // Downloads the SCP page and injects the local CSS
+        fun downloadAndPrepareSCP(okhttp:OkHttpClient, url:String): SCPPage? {
+
+
+            val details: SCPPageDetails = getPageDetails(url) ?: return null
+
+            if (details.Domain != "www.scp-wiki.net") return null
+
+            val page_source_request = requestSource(details.Page_ID)
+
+            val page_source_response = okhttp.newCall(page_source_request)?.execute()!!
+
+
+            if (!page_source_response.isSuccessful) return null
+
+
+            val page = SCPPage()
+            val json = JSONObject(page_source_response.body()?.string()!!)
+            var decoded = Html.fromHtml(json.getString("body")).toString()
+
+            // Drop "Page Source" from the top of the string
+            val drop_str = "Page source"
+            if (decoded.startsWith(drop_str)) {
+                decoded = decoded.drop(drop_str.length)
+                decoded = decoded.trimStart()
+                decoded = decoded.trimStart('\n')
+            }
+            // These characters are actually not the same
+            // One is U+00A0 : NO-BREAK SPACE [NBSP], the other is a regular space
+            // I don't know why the scp source does this, so we have to fix it
+            decoded = decoded.replace(NO_BREAK_SPACE,' ')
+
+            page.Page_Source = decoded
+            page.Page_Details = details
+            page.Page_ID = details.Page_ID
+
+            page_source_response.close()
+            return page
+
+        }
     }
     constructor(context:Context):this(context,null) {
         settings.setAppCacheEnabled(false)
@@ -126,60 +169,23 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
 //        scppage.PageContent = scppage.PageContent?.removeRange(index, indexOfEndTag + 6)
 //    }
 
-    // Downloads the SCP page and injects the local CSS
-    private fun downloadAndPrepareSCP(url:String): SCPPage? {
-
-
-        val details: SCPPageDetails = getPageDetails(url) ?: return null
-
-        if (details.Domain != "www.scp-wiki.net") return null
-
-        val page_source_request = requestSource(details.Page_ID)
-
-        val page_source_response = OkHTTP?.newCall(page_source_request)?.execute()!!
-
-
-        if (!page_source_response.isSuccessful) return null
-
-
-        val page = SCPPage()
-        val json = JSONObject(page_source_response.body()?.string()!!)
-        var decoded = Html.fromHtml(json.getString("body")).toString()
-
-        // Drop "Page Source" from the top of the string
-        val drop_str = "Page source"
-        if (decoded.startsWith(drop_str)) {
-            decoded = decoded.drop(drop_str.length)
-            decoded = decoded.trimStart()
-            decoded = decoded.trimStart('\n')
-        }
-        // These characters are actually not the same
-        // One is U+00A0 : NO-BREAK SPACE [NBSP], the other is a regular space
-        // I don't know why the scp source does this, so we have to fix it
-        decoded = decoded.replace(NO_BREAK_SPACE,' ')
-
-        page.Page_Source = decoded
-        page.Page_Details = details
-        page.Page_ID = details.Page_ID
-
-        page_source_response.close()
-        return page
-
-    }
 
     // Displays the SCP page from the database if its available, otherwise downloads and displays it
     // Todo: Implement database usage
     fun displaySCPPage(url:String): Boolean {
         doAsync{
-            val page = downloadAndPrepareSCP(url)
+            var page: SCPPage? = null
+            Log.i("Time to download page:", "" + measureTimeMillis { page = downloadAndPrepareSCP(OkHTTP!!,url) })
+
             if (page?.Page_ID == CurrentPage()?.Page_ID) return@doAsync
             if (page != null) {
-                val parsed = TextEngine.transform(page)
+                var parsed = ""
+                Log.i("Time to parse page:","" + measureTimeMillis { parsed = TextEngine.transform(page!!) })
                 uiThread {
 
                     this@SCPDisplay.loadDataWithBaseURL("file:///android_asset/", parsed, "text/html", "UTF-8",null)
 
-                    this@SCPDisplay.History()?.addPage(SCPHistoryEntry(url,page.Page_ID,page.Page_Details!!))
+                    this@SCPDisplay.History()?.addPage(SCPHistoryEntry(url,page!!.Page_ID,page!!.Page_Details!!))
 
                     (this@SCPDisplay.context as HomeActivity).updateTitle(CurrentPage()?.Details?.Page_Name)
                 }

@@ -1,5 +1,6 @@
 package pfister.scpbrowser.scprender
 
+import okhttp3.OkHttpClient
 import pfister.scpbrowser.scpdata.SCPPage
 import pfister.scpbrowser.scprender.parserules.*
 import pfister.scpbrowser.scprender.renderrules.*
@@ -11,6 +12,7 @@ class TextWikiEngine {
     companion object {
         const val DELIM: Char = 0xff.toChar()
     }
+
     // The default list of rules, in order, to apply to the source text
     private val rules = arrayOf(
             "Include",
@@ -94,6 +96,8 @@ class TextWikiEngine {
 
     val local_files_base_url = "http://scp-wiki.wdfiles.com/local--files/"
 
+    var okhttp:OkHttpClient = OkHttpClient()
+
     // Custom configuration for the parsing stage
     val parse_config: Map<String, Any> = mapOf()
 
@@ -107,6 +111,7 @@ class TextWikiEngine {
     var source = ""
 
     private val parse_rule: Array<ParseRule> = arrayOf(
+            ParseInclude(this),
             ParsePrefilter(this),
             ParseDelimiter(this),
             ParseRaw(this),
