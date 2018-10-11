@@ -21,7 +21,7 @@ class Config(initialCapacity:Int,loadFactor:Float = 0.75f) : HashMap<String,Any>
 
     fun get_int(key:String):Int? = get_class<Int>(key)
 
-    fun get_array(key:String):Array<Any>? = get_class<Array<Any>>(key)
+    fun <T> get_array(key:String):Array<T>? = get_class<Array<T>>(key)
 
     fun get_array_string(key:String):Array<String>? = get_class<Array<String>>(key)
 
