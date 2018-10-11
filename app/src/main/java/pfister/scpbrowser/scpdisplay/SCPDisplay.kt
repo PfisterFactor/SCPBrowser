@@ -25,6 +25,13 @@ class SCPDisplay(context: Context,attr:AttributeSet?): WebView(context,attr) {
         const val HOME_PAGE_ID:Int = 1946911
         const val INVALID_PAGE:String = "invalid_page"
         const val INVALID_PAGE_ID: Int = -1
+        val SERIES_PAGES = arrayOf<String>(
+                "http://scp-wiki.wikidot.com/scp-series",
+                "http://scp-wiki.wikidot.com/scp-series-2",
+                "http://scp-wiki.wikidot.com/scp-series-3",
+                "http://scp-wiki.wikidot.com/scp-series-4",
+                "http://scp-wiki.wikidot.com/scp-series-5"
+        )
         const val NO_BREAK_SPACE:Char = ' '
 
         fun requestSource(page_ID: Int): Request {

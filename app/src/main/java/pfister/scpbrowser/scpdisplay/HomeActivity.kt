@@ -73,7 +73,7 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         title = if (newTitle == null || newTitle == SCPDisplay.INVALID_PAGE)
             "SCP Browser"
         else {
-            if (newTitle.startsWith("scp-"))
+            if (newTitle.startsWith("scp-") && newTitle.drop("scp-".length).toIntOrNull() != null)
                 newTitle.toUpperCase()
             else
                 newTitle.capitalize()
@@ -129,16 +129,16 @@ class HomeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 displayAndUpdateStack(SCPDisplay.HOME_PAGE)
             }
             R.id.nav_series_I -> {
-//                displayAndUpdateStack(SCPDisplay.SeriesPage(1))
+                displayAndUpdateStack(SCPDisplay.SERIES_PAGES[0])
             }
             R.id.nav_series_II -> {
-//                displayAndUpdateStack(SCPDisplay.SeriesPage(2))
+                displayAndUpdateStack(SCPDisplay.SERIES_PAGES[1])
             }
             R.id.nav_series_III -> {
-//                displayAndUpdateStack(SCPDisplay.SeriesPage(3))
+                displayAndUpdateStack(SCPDisplay.SERIES_PAGES[2])
             }
             R.id.nav_series_IV -> {
-//                displayAndUpdateStack(SCPDisplay.SeriesPage(4))
+                displayAndUpdateStack(SCPDisplay.SERIES_PAGES[3])
             }
         }
 
