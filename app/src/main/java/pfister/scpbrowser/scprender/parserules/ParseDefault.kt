@@ -13,29 +13,6 @@ abstract class ParseDefault : ParseRule {
     }
 
 
-    fun getAttrs(text:String): Map<String,String> {
-        fun stripslashes(text:String):String =
-            text.replace("\\\\", "!~!").replace("\\", "").replace("!~!", "\\")
-
-        val tmp = text.trim().split("=\"")
-
-        val attrs = mutableMapOf<String,String>()
-        var key = ""
-
-        for ((index,value) in tmp.withIndex()) {
-            if (index == 0) {
-                key = value.trim()
-                continue
-            }
-
-            val pos = value.lastIndexOf('"')
-            attrs[key] = stripslashes(value.substring(0,pos)).trim()
-            key = value.substring(pos+1).trim()
-
-        }
-        return attrs.toMap()
-    }
-
     fun regexReplace(reg: Regex,callback: (MatchResult) -> CharSequence) {
         text_engine.source = reg.replace(text_engine.source) { x -> callback(x) }
     }

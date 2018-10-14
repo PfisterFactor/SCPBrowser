@@ -1,6 +1,7 @@
 package pfister.scpbrowser.scprender.parserules
 
 import pfister.scpbrowser.scprender.Config
+import pfister.scpbrowser.scprender.TextEngineUtils
 import pfister.scpbrowser.scprender.TextWikiEngine
 
 class ParseImage(override val text_engine: TextWikiEngine) : ParseDefault() {
@@ -27,7 +28,7 @@ class ParseImage(override val text_engine: TextWikiEngine) : ParseDefault() {
         else {
             options = Config.mapOf(
                     "src" to match.groupValues[2].substring(0,pos),
-                    "attr" to getAttrs(match.groupValues[2].substring(pos+1))
+                    "attr" to TextEngineUtils.getAttrs(match.groupValues[2].substring(pos+1))
             )
 
             // If there is a valid link attribute present then don't handle this match
