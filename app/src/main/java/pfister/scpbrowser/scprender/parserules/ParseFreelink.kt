@@ -1,5 +1,6 @@
 package pfister.scpbrowser.scprender.parserules
 
+import pfister.scpbrowser.scpdisplay.SCPDisplay
 import pfister.scpbrowser.scprender.Config
 import pfister.scpbrowser.scprender.TextEngineUtils
 import pfister.scpbrowser.scprender.TextWikiEngine
@@ -41,12 +42,15 @@ class ParseFreelink(override val text_engine: TextWikiEngine) : ParseDefault() {
         else
             text = text.drop(1)
 
+        if (page.startsWith(SCPDisplay.HOME_PAGE))
+            page = page.replace(SCPDisplay.HOME_PAGE,"")
+
         page = TextEngineUtils.toUnixName(page)
 
         val options = Config.mapOf(
                 "site" to site.orEmpty(),
                 "page" to page,
-                "text" to text,
+                "text" to text.trim(),
                 "anchor" to anchor.orEmpty(),
                 "textFromTitle" to textFromTitle,
                 "nonbr" to nonbr
