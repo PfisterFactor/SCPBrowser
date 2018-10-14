@@ -117,6 +117,7 @@ class TextWikiEngine {
             ParseRaw(this),
             ParseModule(this),
             ParseComment(this),
+            ParseFreelink(this),
             ParseHeading(this),
             ParseHoriz(this),
             ParseBreak(this),
@@ -128,7 +129,7 @@ class TextWikiEngine {
             ParseNewline(this),
             ParseParagraph(this),
             ParseURL(this),
-            ParseWikilink(this),
+            //ParseWikilink(this),
             ParseStrong(this),
             ParseEmphasis(this)
     )
@@ -136,6 +137,7 @@ class TextWikiEngine {
             "Delimiter" to RenderDelimiter(this),
             "Raw" to RenderRaw(this),
             "Module" to RenderModule(this),
+            "Freelink" to RenderWikilink(this),
             "Heading" to RenderHeading(this),
             "Horiz" to RenderHoriz(this),
             "Break" to RenderBreak(this),

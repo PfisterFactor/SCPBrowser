@@ -11,7 +11,7 @@ class RenderWikilink(override val text_engine: TextWikiEngine) : RenderRule {
     override val conf: Config? = Config.mapOf(
             "pages" to arrayOf<String>(),
             "view_url" to SCPDisplay.HOME_PAGE,
-            "new_url" to SCPDisplay.HOME_PAGE,
+            "new_url" to "http://www.scp-wiki.net/new-page/",
             "new_text" to "?",
             "new_text_pos" to "after", // before, after, or none
             "css" to "",
@@ -26,8 +26,8 @@ class RenderWikilink(override val text_engine: TextWikiEngine) : RenderRule {
     }
 
     override fun render(token: TextToken): String {
-        val page = token.options?.get_string("page")!!
-        val text = token.options.get_string("text")!!
+        var page = token.options?.get_string("page")!!
+        var text = token.options.get_string("text")!!
         var anchor = token.options.get_string("anchor")!!
 
 
@@ -36,32 +36,46 @@ class RenderWikilink(override val text_engine: TextWikiEngine) : RenderRule {
         else
             true // assume it exists
 
-        if (anchor.isNotEmpty())
-            anchor = "#" + TextUtils.htmlEncode(anchor.substring(1))
+        val textFromTitle = conf.get_bool("textFromTitle") == true
+        if (exists && textFromTitle) {
+            val url = SCPDisplay.HOME_PAGE + page
+            val details = SCPDisplay.getPageDetails(url)
+            text = details?.Page_Name ?: text // Todo: switch this to page title
+        }
+        else if (textFromTitle)
+            text = page
+
+        page = TextUtils.htmlEncode(page.trim())
+        text = text.trim()
+        anchor = anchor.trim()
+
+        if (conf.get_bool("nonbr") == true)
+            text = text.replace(" ", "&nbsp")
+
 
         var start:String
         val end:String
 
         if (exists) {
-            val href = conf.get_string("view_url")!! + TextUtils.htmlEncode(page) + anchor
+            val href = conf.get_string("view_url")!! + page + anchor
 
             val css_string = conf.get_string("css")
             val css = when (css_string) {
                 "" -> ""
-                is String -> """ class="${TextUtils.htmlEncode(css_string)}""""
+                is String -> """ class="${css_string}""""
                 else -> ""
             }
 
-            start = """<a$css href="${TextUtils.htmlEncode(href)}">"""
+            start = """<a$css href="$href">"""
             end = "</a>"
         }
         else {
-            val href = conf.get_string("new_url")!! + TextUtils.htmlEncode(page)
+            val href = conf.get_string("new_url")!! + page
 
             val css_string = conf.get_string("css_new")
             val css = when (css_string) {
                 "" -> ""
-                is String -> """ class="${TextUtils.htmlEncode(css_string)}""""
+                is String -> """ class="$css_string""""
                 else -> ""
             }
 
@@ -82,12 +96,12 @@ class RenderWikilink(override val text_engine: TextWikiEngine) : RenderRule {
             }
 
             if (text.isEmpty()) {
-                start += TextUtils.htmlEncode(page)
+                start += page
             }
 
         }
 
-        return start + TextUtils.htmlEncode(text) + end
+        return start + text + end
 
     }
 }
