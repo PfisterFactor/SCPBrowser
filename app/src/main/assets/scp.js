@@ -126,6 +126,16 @@ function handleFootnotes() {
 function handleOversizedImages() {
   $(".scp-image-block").css("width","");
   $(".scp-image-block").children("img").css("width","");
+
+  $(".scp-image-block.block-right").children("img").css("width","");
+  $(".scp-image-block.block-right").attr("class","scp-image-block block-center")
+
+  $(".scp-image-block.block-left").children("img").css("width","");
+  $(".scp-image-block.block-left").attr("class","scp-image-block block-center")
+
+  $(".scp-image-block.block-center").css("width","");
+  $(".scp-image-block.block-center").children("img").css("width""");
+
   $(".scp-image-caption").css("width","");
   $(".image").css("width","");
 }
