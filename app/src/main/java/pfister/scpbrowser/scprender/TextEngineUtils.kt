@@ -110,8 +110,7 @@ object TextEngineUtils {
 
     // Ugly as hell
     fun toUnixName(text:String): String {
-        var result = text
-        result = text.trim()
+        var result = text.trim()
         CONVERT_ARRAY.forEach { result.replace(it.first,it.second) }
 
         result = result.toLowerCase()

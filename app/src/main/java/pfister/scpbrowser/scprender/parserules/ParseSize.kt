@@ -24,7 +24,7 @@ class ParseSize(override val text_engine: TextWikiEngine) : ParseDefault() {
         val start_regex = regex
         val end_regex = """\[\[/size\]\]""".toRegex(setOf(RegexOption.IGNORE_CASE,RegexOption.DOT_MATCHES_ALL))
         regexReplace(start_regex) {process(it)}
-        regexReplace(end_regex) {process_end_size(it)}
+        regexReplace(end_regex) {process_end_size() }
     }
 
     override fun process(match: MatchResult): CharSequence {
@@ -47,7 +47,7 @@ class ParseSize(override val text_engine: TextWikiEngine) : ParseDefault() {
         return text_engine.addToken(rule_name,options)
     }
 
-    private fun process_end_size(match:MatchResult): CharSequence = text_engine.addToken(rule_name,Config.mapOf("type" to "end"))
+    private fun process_end_size(): CharSequence = text_engine.addToken(rule_name,Config.mapOf("type" to "end"))
 
 
 }

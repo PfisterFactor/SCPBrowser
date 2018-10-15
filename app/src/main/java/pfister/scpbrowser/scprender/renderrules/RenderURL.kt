@@ -30,7 +30,7 @@ class RenderURL(override val text_engine: TextWikiEngine) : RenderRule {
 
         href = TextUtils.htmlEncode(href)
 
-        var start = ""
+        var start: String
         var end = ""
 
 

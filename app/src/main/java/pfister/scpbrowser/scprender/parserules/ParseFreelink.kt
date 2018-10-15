@@ -33,8 +33,8 @@ class ParseFreelink(override val text_engine: TextWikiEngine) : ParseDefault() {
 
         if (text.isEmpty()) {
             text = page
-            val pos = text.indexOf(":")
-            if (pos != -1)
+            val pos2 = text.indexOf(":")
+            if (pos2 != -1)
                 text = text.substring(pos+1)
         }
         else if (text == "|")
